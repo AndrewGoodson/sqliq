@@ -65,6 +65,30 @@ No direct live commands, SQL checks, remediation or signing from the agent. Cata
 all STIG controls. Only the separate signed-write broker may execute supported changes; never use a shell or arbitrary SQL.
 Learning accepts de-identified enumerated signals only; it never changes controls.
 
+## STIG review during migration
+
+Apply [SQL migration review](../../../docs/sql-migration-review.md) with the
+`sql-migration-planning` skill when a database moves or its platform changes.
+Inventory each source and target benchmark separately; the bundled 102-rule SQL
+Server 2022 package is not a universal benchmark for every engine or Azure service.
+Tailor each rule with an approved rationale rather than deleting it. Obtain scoped
+provider assurance for provider-managed operations and customer evidence for
+permissions, networking, auditing, keys, recovery and application behavior.
+
+Keep before/after evidence linked by exact rule ID and benchmark release. Identify
+new gaps, changed applicability, responsibility transfers, expired exceptions and
+lost audit/retention coverage. A source PASS never carries forward automatically.
+Keep TLS findings under SP 800-52 and financial obligations under their own selected
+frameworks; neither is implied by a STIG result. Require financial-owner approval
+of reconciliation scope, tolerances and results before a cutover recommendation.
+
+Provide technical, security/compliance and financial owners a go/no-go packet with
+blockers, unresolved evidence, remediation, exceptions and rollback limits. Do not
+interpret their review as broker authorization or execute the migration. Repeat
+target control checks after cutover using approved operator evidence, then issue
+separate pre/post reports. Reports render supplied findings; they do not independently
+verify evidence or automatically calculate migration drift.
+
 For IT and board concerns, read [AI governance](../../../docs/ai-governance.md).
 Generate `board-report --output NEW_PDF` offline. Explain provider, customer and
 shared responsibility; require scoped provider attestations before claiming inherited

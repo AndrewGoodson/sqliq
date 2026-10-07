@@ -29,3 +29,19 @@ after-domain hooks reject skill mismatches, live tools and unsupported verdicts.
 Join all required results in fixed order; abort if any specialist fails. These
 deterministic hooks do not execute hardening changes or replace the signed broker.
 See [parallel domain reviews](../../../docs/parallel-domain-reviews.md).
+
+## Migration and compliance routing
+
+For migration, load `sql-migration-planning` and `sql-compliance-review` alongside
+Azure security review. Require all three specialist results and the fixed migration
+contract from `guide --workflow migration`; never drop compliance to unblock a plan.
+Apply [migration review gates](../../../docs/sql-migration-review.md): exact source
+and target scope, every-rule STIG applicability, provider/customer evidence,
+financial reconciliation, rehearsal/restore, go/no-go review and postmigration
+validation. Keep SP 800-52 TLS and financial framework conclusions distinct.
+
+Hooks validate the declared routing/check contract, not the truth or completeness
+of operator evidence. Missing specialist output or missing required checks aborts
+guidance; unresolved customer evidence remains an explicit readiness blocker.
+Preserve separate pre/post findings and approval records outside Git. A migration
+plan is for a separately governed operator; the broker does not execute migrations.

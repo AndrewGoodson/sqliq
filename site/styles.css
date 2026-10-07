@@ -26,4 +26,12 @@
 .catalog-detail summary>span{font-size:10px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
 .catalog-detail>div{padding-bottom:24px}.catalog-list{margin:0}.catalog-list>div{padding:14px 0;border-top:1px solid var(--line)}
 .catalog-list dt{font-size:12px;font-weight:600}.catalog-list dd{font-size:11px;line-height:1.7;margin:7px 0 0;color:var(--muted)}
-@media(max-width:760px){.kpi summary{grid-template-columns:56px 1fr auto;gap:12px}.kpi summary>strong{font-size:43px}.kpi-title{font-size:14px}.kpi-detail{padding:20px 18px}.register-head{font-size:7px;letter-spacing:.6px}}
+@media(max-width:760px){.kpi summary{grid-template-columns:68px 1fr auto;gap:12px}.kpi summary>strong{font-size:43px}.kpi-title{font-size:14px}.kpi-detail{padding:20px 18px}.register-head{font-size:7px;letter-spacing:.6px}}
+
+/* Migration review stages follow the same editorial grid as the control register. */
+.migration{border-bottom:1px solid var(--line)}
+.migration-gates{list-style:none;padding:0;margin:45px 0 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.migration-gates li{border-top:1px solid var(--line);padding-top:20px}.migration-gates .index{display:block;font:600 9px Arial,sans-serif;letter-spacing:1px;margin-bottom:20px}.migration-gates h3{font-size:18px;line-height:1.4}.migration-gates p{font-size:13px;margin:0}
+.migration-foot{display:flex;justify-content:space-between;align-items:start;gap:35px}.migration-foot .inline-link{flex-shrink:0}.migration-foot p{max-width:640px;margin:0;font-size:11px}
+@media(max-width:1050px){.migration-gates{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.migration-gates{grid-template-columns:1fr;gap:25px;margin-top:30px}.migration-gates .index{margin-bottom:12px}.migration-foot{display:block}.migration-foot p{margin-top:20px}}

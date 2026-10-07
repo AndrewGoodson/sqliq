@@ -1,13 +1,15 @@
 # SQLIQ
 
-**NIST SP 800-52 SQL TLS reviews and governed Azure SQL workflows for Codex and Claude Code.**
+**SQL STIG reviews, compliance evidence and governed Azure SQL migration planning for Codex and Claude Code.**
 
-[Website](https://andrewgoodson.github.io/sqliq/) · [Sample TLS report](https://andrewgoodson.github.io/sqliq/assets/sqliq-tls-review.pdf) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
+[Website](https://andrewgoodson.github.io/sqliq/) · [Sample STIG report](https://andrewgoodson.github.io/sqliq/assets/sqliq-stig-review.pdf) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
 
 <img src="site/assets/sqliq-logo.png" alt="SQLIQ shield logo" width="128">
 
-Shared Codex and Claude Code workflows for Azure SQL assessments, migrations, schema
-review, performance, security and maintenance. AEF Core orchestration with dedicated
+Shared Codex and Claude Code workflows for Azure SQL security assessments, migration
+readiness, schema review, performance and maintenance. Account for every selected
+SQL STIG rule, document evidence and ownership, and preserve controls before and
+after a migration. AEF Core orchestration with dedicated
 Azure, SQL and compliance specialists, pinned Microsoft
 skills, local security skills, and an independently approved metadata-read broker.
 Built for accounting teams and financial institutions. Public, tenant-neutral source. No credentials, tenant discovery or database access
@@ -32,7 +34,9 @@ Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 uv sync --locked --group dev
 uv run azure-sql-agent verify
 uv run azure-sql-agent graph
-uv run azure-sql-agent guide --workflow nist-tls
+uv run azure-sql-agent guide --workflow compliance
+uv run azure-sql-agent compliance-report --catalog sql-2022-stigs --output stig-review.html
+uv run azure-sql-agent guide --workflow migration
 uv run azure-sql-agent plan --policy config/example.json --action schema_inventory
 uv run azure-sql-agent propose --kind add_nullable_column --table Orders --name ReviewedAt --type 'datetime2(7)'
 uv run azure-sql-agent learn --outcomes config/learning-example.json
@@ -55,6 +59,8 @@ A download does not grant access to Azure or install a production broker.
 | Codex and Claude skills | Shared local skills and Microsoft references | Host must load and apply them; instructions are not an OS sandbox |
 | AEF Core graphs and hooks | Parallel Azure, SQL and compliance guidance; domain checks | Deterministic offline routing, not autonomous database assessment |
 | Governed self-learning | De-identified repeated outcomes become review candidates | Human-reviewed promotion; no model retraining or automatic policy changes |
+| SQL STIG coverage | 102 pinned SQL Server 2022 instance/database rules with source checks and remediation | Every rule retained; Azure PaaS and other engine versions need reviewed applicability |
+| Migration review | Three specialists, pre/post STIG evidence, reconciliation and cutover/rollback contract | Operator plan only; no migration execution or automatic go decision |
 | NIST SP 800-52 Rev. 2 | [Dedicated TLS workflow and HTML/PDF profile](docs/nist-tls-review.md) | Separate from SQL STIGs and the SP 800-53 catalog |
 | Compliance reports | HTML/PDF control registers, evidence and recommendations | Missing evidence remains NOT_ASSESSED; no live compliance scanner |
 | Database reads and writes | Two fixed metadata reads; separate nullable-column write broker | Exact fresh externally signed approval and isolated deployment required |
@@ -62,13 +68,13 @@ A download does not grant access to Azure or install a production broker.
 For a first agent session, start Codex or Claude Code in this checkout and use:
 
 ```text
-Use orchestration-security and sql-compliance-review for one Azure SQL Database.
-Read docs/nist-tls-review.md and run guide --workflow nist-tls. Confirm the
-skills and domain hooks selected. Ask for a redacted scope and approved evidence;
-do not connect to Azure or SQL. Focus on SP 800-52 Rev. 2 server/client TLS evidence.
-Track applicable SQL STIGs and SP 800-53 controls separately. Identify inherited, shared and
-customer controls, missing evidence, recommendations, owners and approval needs.
-Do not call an unassessed control passed. Produce a reviewable report.
+Use orchestration-security and sql-compliance-review for one Azure SQL review.
+Run guide --workflow compliance and confirm the skills and domain hooks selected.
+Ask for a redacted service/version scope and already-approved evidence; do not
+connect to Azure or SQL. Select the benchmark and account for every STIG rule with
+applicability, evidence, provider/customer responsibility, findings and remediation.
+Keep SP 800-52 TLS and financial framework reviews separate. Do not call an
+unassessed control passed. Produce a report with evidence gaps and named owners.
 ```
 
 Use [workflow selection](docs/agent-usage.md#select-a-workflow) for schema,
@@ -96,9 +102,11 @@ maintenance execution are unsupported. See [host acceptance cases](docs/agent-ev
 flowchart LR
   Task --> Orchestrator[AEF orchestration agent]
   Orchestrator --> Azure[Azure specialist]
-  Azure --> SQL[SQL specialist]
-  SQL --> Compliance[Compliance specialist]
-  Compliance --> Plan[Offline review plan]
+  Orchestrator --> SQL[SQL specialist]
+  Orchestrator --> Compliance[Compliance specialist]
+  Azure --> Plan[All-required offline review join]
+  SQL --> Plan
+  Compliance --> Plan
   Plan --> Human[Human reviewer: external signing key]
   Human --> Broker[Isolated broker: signature + policy + durable nonce]
   Broker --> ARM[Fixed Azure GET posture checks]
@@ -141,7 +149,50 @@ connections. GitHub Pages deploys only that directory.
 
 [Validation evidence](docs/validation.md) records the tested scope and remaining deployment gates.
 
-## NIST SP 800-52: primary SQL TLS review
+## SQL STIG review
+
+Start with the pinned SQL Server 2022 instance and database benchmarks: **102 rules**,
+each retaining its source ID, requirement, check and remediation. Every rule receives
+a disposition; missing evidence stays **NOT_ASSESSED**.
+
+```sh
+uv run azure-sql-agent guide --workflow compliance
+uv run azure-sql-agent compliance-report --catalog sql-2022-stigs --output stig-review.html
+uv run azure-sql-agent compliance-report --catalog sql-2022-stigs --format pdf --output stig-review.pdf
+```
+
+Select the exact service/version and benchmark first. SQL Server on Azure VM,
+Managed Instance and Azure SQL Database have different responsibility boundaries;
+PaaS needs rule-by-rule tailoring and scoped provider assurance. The pinned SQL
+Server 2022 release is not a universal SQL benchmark. See [STIG coverage and
+applicability](docs/stig-coverage.md). Reports render supplied findings, not live scans.
+Preview the complete unassessed sample in [HTML](https://andrewgoodson.github.io/sqliq/assets/sqliq-stig-review.html)
+or [PDF](https://andrewgoodson.github.io/sqliq/assets/sqliq-stig-review.pdf).
+
+## Migration with compliance review
+
+```sh
+uv run azure-sql-agent guide --workflow migration
+```
+
+Azure, SQL and compliance specialists review source/target support, compatibility,
+every-rule STIG applicability, provider/customer evidence, financial reconciliation,
+rehearsal, recovery and cutover. The migration contract requires a go/no-go decision
+packet and postmigration evidence; hooks reject missing or changed declared checks.
+They do not prove the evidence is complete or authorize a migration.
+
+Load `orchestration-security`, `sql-migration-planning` and `sql-compliance-review`
+in Codex or Claude. Keep separate source-before and target-after findings; a source
+PASS cannot be carried forward without target evidence. Obtain technical,
+security/compliance and financial-owner review of blockers, tolerances, exceptions
+and rollback limits. See the [migration review gates](docs/sql-migration-review.md)
+and [agent migration prompt](docs/agent-usage.md#sql-migration-with-compliance-review).
+
+SQLIQ produces an operator plan. Migration execution requires a separately governed
+operator and the organization's approved change process. The broker's supported
+nullable-column write does not authorize migration tools, cutover or source retirement.
+
+## NIST SP 800-52: separate SQL TLS review
 
 Start SQL database transport-security reviews with the dedicated TLS workflow:
 
@@ -164,7 +215,7 @@ See the [SQL TLS assessment guide](docs/nist-tls-review.md) for source sections,
 client/server evidence, provider responsibilities and the finding format.
 `--catalog all` remains the SP 800-53 / DISA bundle; assess TLS separately.
 
-## Compliance review
+## Evidence-backed compliance reports
 
 The fourth AEF agent reviews SQL STIG coverage, NIST TLS evidence and financial
 control applicability. `uv run azure-sql-agent guide --workflow compliance` prepares

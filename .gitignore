@@ -32,6 +32,8 @@ findings*.json
 # Local PDF render inspection scratch files.
 tmp/
 
-# Default offline TLS review artifacts (may later contain customer findings).
+# Default offline review artifacts (may later contain customer findings).
 tls-review.html
 tls-review.pdf
+stig-review.html
+stig-review.pdf

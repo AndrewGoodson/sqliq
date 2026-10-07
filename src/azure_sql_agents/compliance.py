@@ -7,6 +7,19 @@ from pathlib import Path
 
 MAX_BYTES = 16 * 1024 * 1024
 NAMESPACES = {"http://checklists.nist.gov/xccdf/1.1", "http://checklists.nist.gov/xccdf/1.2"}
+DISA_DESCRIPTION_LABELS = {
+    "VulnDiscussion": "Discussion",
+    "FalsePositives": "False positives",
+    "FalseNegatives": "False negatives",
+    "Documentable": "Documentable",
+    "Mitigations": "Mitigations",
+    "SeverityOverrideGuidance": "Severity override guidance",
+    "PotentialImpacts": "Potential impacts",
+    "ThirdPartyTools": "Third-party tools",
+    "MitigationControl": "Mitigation control",
+    "Responsibility": "Responsibility",
+    "IAControls": "IA controls",
+}
 
 
 def stig_register(path: Path) -> dict:
@@ -143,7 +156,8 @@ def compliance_html(register: dict, evidence_path: Path | None = None) -> str:
     details = []
     for control in register["controls"]:
         details.append("<section><h2>" + escape(control["rule_id"]) + "</h2>" +
-                       "".join("<p><strong>" + escape(label) + ":</strong> " + escape(value)
+                       "".join("<p><strong>" + escape(label) + ":</strong> "
+                               + escape(value).replace("\n", "<br>")
                                + "</p>" for label, value in control_details(control,
                                    findings.get(control["rule_id"], {}))) + "</section>")
     summary = ' · '.join(f'{key}: {value}' for key, value in counts.items())
@@ -151,7 +165,7 @@ def compliance_html(register: dict, evidence_path: Path | None = None) -> str:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>SQLIQ SQL compliance review</title><style>
-body{font:16px system-ui;color:#17313d;background:#f5f7f8;margin:3vw}
+body{font:16px system-ui;color:#17313d;background:#f5f7f8;margin:3vw;overflow-wrap:anywhere}
 h1{font-size:2.3rem}h2{margin-top:2rem}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:white}
 th,td{padding:12px;border:1px solid #ccd7dd;text-align:left;vertical-align:top;min-width:110px;overflow-wrap:anywhere}
 th{background:#17313d;color:white}p{max-width:95ch;line-height:1.6}
@@ -183,6 +197,31 @@ applies to every database. Provider attestations do not prove customer complianc
 writes require separate exact signed approval.</p></html>'''
 
 
+def requirement_display_text(requirement: str) -> str:
+    """Label flat DISA description fields for display; leave source data untouched.
+
+    Unexpected fragments remain literal text for the HTML/PDF renderers to escape.
+    Do not discard unknown fields, nested content, attributes or parser directives.
+    """
+    if (len(requirement) > MAX_BYTES or "<!" in requirement or "<?" in requirement
+            or "\x00" in requirement):
+        return requirement
+    try:
+        root = ET.fromstring("<description>" + requirement + "</description>")
+    except ET.ParseError:
+        return requirement
+    if not len(root) or (root.text and root.text.strip()):
+        return requirement
+    for field in root:
+        if (field.tag not in DISA_DESCRIPTION_LABELS or field.attrib or len(field)
+                or (field.tail and field.tail.strip())):
+            return requirement
+    return "\n\n".join(
+        f"{DISA_DESCRIPTION_LABELS[field.tag]}: {field.text.strip()}"
+        for field in root if field.text and field.text.strip()
+    ) or "Not supplied by benchmark"
+
+
 def control_details(control: dict, finding: dict) -> list[tuple[str, str]]:
     """Preserve source check/fix text without executing benchmark content."""
     references = [f"{i.get('system')}: {i.get('value')}" for i in control['identifiers']]
@@ -191,7 +230,7 @@ def control_details(control: dict, finding: dict) -> list[tuple[str, str]]:
         ('Rule version', control.get('version') or 'Not supplied'),
         ('Severity', control.get('severity') or 'Unknown'),
         ('Reported status', finding.get('status', 'NOT_ASSESSED')),
-        ('Requirement', control['requirement']),
+        ('Requirement', requirement_display_text(control['requirement'])),
         ('References', '; '.join(references) or 'Rule ID in hashed benchmark'),
         ('Check instructions', '\n'.join(control['checks']) or 'Not supplied by benchmark'),
         ('Evidence', finding.get('evidence', 'Missing')),

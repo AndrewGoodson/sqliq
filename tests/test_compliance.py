@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from azure_sql_agents.compliance import compliance_html, stig_register
+from azure_sql_agents.compliance import compliance_html, control_details, stig_register
 from azure_sql_agents.orchestration import guide
 
 XML = b'''<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="synthetic">
@@ -127,3 +127,131 @@ def test_audit_pdf_rejects_mismatched_evidence(tmp_path):
     bad.write_text('{"benchmark_sha256":"wrong","target":"demo","findings":[]}')
     with pytest.raises(ValueError, match='benchmark mismatch'):
         audit_pdf(stig_register(source), bad)
+
+
+def description_register(tmp_path, description):
+    from html import escape
+
+    data = XML.replace(b'<title>Test control</title>',
+                       ('<title>Test control</title><description>' + escape(description)
+                        + '</description>').encode())
+    return stig_register(benchmark(tmp_path, data))
+
+
+def test_disa_description_is_readable_in_html_and_pdf_without_changing_source(tmp_path):
+    from copy import deepcopy
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from azure_sql_agents.audit_report import audit_pdf
+
+    description = ('<VulnDiscussion>Protect financial records &amp; audit evidence.</VulnDiscussion>'
+                   '<FalsePositives></FalsePositives><FalseNegatives/>'
+                   '<Documentable>false</Documentable>'
+                   '<Mitigations>Retain an independently reviewed exception.</Mitigations>'
+                   '<SeverityOverrideGuidance>Review severity.</SeverityOverrideGuidance>'
+                   '<PotentialImpacts>Reconcile posting totals.</PotentialImpacts>'
+                   '<ThirdPartyTools>Review tool scope.</ThirdPartyTools>'
+                   '<MitigationControl>Approved compensating control.</MitigationControl>'
+                   '<Responsibility>Customer control owner.</Responsibility>'
+                   '<IAControls>IA-TEST</IAControls>')
+    register = description_register(tmp_path, description)
+    original = deepcopy(register)
+    source_bytes = (tmp_path / 'benchmark.xml').read_bytes()
+    html = compliance_html(register)
+    pdf = PdfReader(BytesIO(audit_pdf(register, company_name='Demo organization')))
+    text = '\n'.join(page.extract_text() for page in pdf.pages)
+    expected = [
+        'Discussion: Protect financial records', 'Documentable: false',
+        'Mitigations: Retain an independently reviewed exception.',
+        'Severity override guidance: Review severity.',
+        'Potential impacts: Reconcile posting totals.', 'Third-party tools: Review tool scope.',
+        'Mitigation control: Approved compensating control.',
+        'Responsibility: Customer control owner.', 'IA controls: IA-TEST',
+    ]
+    for phrase in expected:
+        assert phrase in html and phrase in text
+    for field in ['VulnDiscussion', 'FalsePositives', 'FalseNegatives']:
+        assert field not in html and field not in text
+    assert '<br><br>Documentable: false' in html
+    assert register == original
+    assert register['controls'][1]['requirement'] == description
+    assert register['benchmark_sha256'] == hashlib.sha256(source_bytes).hexdigest()
+    assert (tmp_path / 'benchmark.xml').read_bytes() == source_bytes
+
+
+@pytest.mark.parametrize('description', [
+    'Ordinary requirement with <angle brackets> & a comparison.',
+    '<VulnDiscussion>Unclosed requirement',
+    '<VulnDiscussion>Known.</VulnDiscussion><FutureField>Keep this.</FutureField>',
+    '<VulnDiscussion><b>Nested content.</b></VulnDiscussion>',
+    '<VulnDiscussion source="retain">Attributed requirement.</VulnDiscussion>',
+    '<VulnDiscussion>Known.</VulnDiscussion>Trailing content.',
+    'Leading content.<VulnDiscussion>Known.</VulnDiscussion>',
+    '<VulnDiscussion><![CDATA[Retain this.]]></VulnDiscussion>',
+    '<!-- Retain this. --><VulnDiscussion>Known.</VulnDiscussion>',
+    '<?instruction retain?><VulnDiscussion>Known.</VulnDiscussion>',
+    '<!DOCTYPE x [<!ENTITY value "Retain this.">]><VulnDiscussion>&value;</VulnDiscussion>',
+])
+def test_unknown_description_formats_remain_complete_and_escaped(tmp_path, description):
+    from html import escape
+
+    register = description_register(tmp_path, description)
+    details = dict(control_details(register['controls'][1], {}))
+    assert details['Requirement'] == description
+    assert escape(description, quote=True) in compliance_html(register)
+
+
+def test_description_markup_cannot_become_html_or_pdf_instructions(tmp_path):
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from azure_sql_agents.audit_report import audit_pdf
+
+    description = ('<VulnDiscussion>&lt;script&gt;visible text&lt;/script&gt;'
+                   '</VulnDiscussion>')
+    register = description_register(tmp_path, description)
+    html = compliance_html(register)
+    assert '<script>' not in html
+    assert 'Discussion: &lt;script&gt;visible text&lt;/script&gt;' in html
+    pdf = PdfReader(BytesIO(audit_pdf(register, company_name='Demo organization')))
+    text = '\n'.join(page.extract_text() for page in pdf.pages)
+    assert 'Discussion: <script>visible text</script>' in text
+
+
+@pytest.mark.parametrize('description', [
+    '<FutureField>Unrecognized source content.</FutureField>',
+    '<VulnDiscussion>Unclosed source content.',
+])
+def test_unrecognized_description_is_preserved_in_pdf(tmp_path, description):
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from azure_sql_agents.audit_report import audit_pdf
+
+    register = description_register(tmp_path, description)
+    pdf = PdfReader(BytesIO(audit_pdf(register, company_name='Demo organization')))
+    text = '\n'.join(page.extract_text() for page in pdf.pages)
+    assert description in text
+
+
+def test_description_directives_are_not_passed_to_xml_parser(tmp_path, monkeypatch):
+    description = '<!DOCTYPE x [<!ENTITY value "Retain this.">]><VulnDiscussion>&value;'
+    register = description_register(tmp_path, description)
+
+    def unexpected_parse(*args, **kwargs):
+        pytest.fail('Display must reject XML directives before parsing')
+
+    monkeypatch.setattr('azure_sql_agents.compliance.ET.fromstring', unexpected_parse)
+    assert dict(control_details(register['controls'][1], {}))['Requirement'] == description
+
+
+def test_empty_disa_fields_do_not_show_markup(tmp_path):
+    description = '<VulnDiscussion/><FalsePositives> </FalsePositives>'
+    register = description_register(tmp_path, description)
+    assert dict(control_details(register['controls'][1], {}))['Requirement'] == (
+        'Not supplied by benchmark')
+    assert register['controls'][1]['requirement'] == description

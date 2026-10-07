@@ -17,15 +17,15 @@ cannot restrict an otherwise privileged agent. Install dependencies with `uv syn
 
 | Task | Local skill | AEF guide |
 |---|---|---|
+| SQL STIG coverage and compliance evidence | sql-compliance-review | compliance |
+| Migration readiness, control continuity and cutover plan | sql-migration-planning | migration |
 | NIST SP 800-52 server/client TLS | sql-compliance-review | nist-tls |
 | Azure CLI assessment planning | azure-cli-assessment | azure-cli |
 | Security posture | azure-security-assessment | security |
 | Bounded catalog metadata | azure-sql-readonly | assessment |
-| Migration readiness and cutover plan | sql-migration-planning | migration |
 | Schema and financial integrity | sql-schema-design | schema |
 | Query plans, indexing, blocking, resource pressure | sql-performance-review | performance |
 | Recovery and maintenance | sql-maintenance-review | maintenance |
-| STIG, TLS and finance evidence | sql-compliance-review | compliance |
 | DDL proposal review | sql-change-review | schema |
 
 For example, ask Codex to use `$sql-performance-review`, or invoke Claude's
@@ -81,7 +81,44 @@ model/version, selected skills, output and pass/fail evidence. Automated reposit
 checks do not establish agent quality rankings or enterprise certification. Refresh
 Microsoft sources through reviewed commits, never unattended self-learning promotion.
 
-## Primary SQL TLS review
+## SQL STIG and compliance review
+
+Start with `uv run azure-sql-agent guide --workflow compliance`. Select the exact
+service/version and benchmark; account for every rule with evidence, applicability,
+provider/customer responsibility, owner and proposed remediation. Use
+`uv run azure-sql-agent compliance-report --catalog sql-2022-stigs --output stig-review.html`
+for the pinned SQL Server 2022 register. Reports start NOT_ASSESSED and do not scan
+a live database. Azure SQL PaaS needs reviewed rule-by-rule tailoring. See
+[STIG applicability](stig-coverage.md) and [compliance evidence](compliance.md).
+
+## SQL migration with compliance review
+
+Use `uv run azure-sql-agent guide --workflow migration` and load
+`orchestration-security`, `sql-migration-planning` and `sql-compliance-review`.
+The three specialist contracts require source/target compatibility and service
+scope, every-rule STIG applicability, provider/customer evidence, financial
+reconciliation, rehearsal and rollback, go/no-go review and postmigration checks.
+Follow [migration review gates](sql-migration-review.md). Before/after hooks validate
+the declared contract; the host and reviewers must still examine the evidence.
+
+Ask the host:
+
+```text
+Prepare a SQL migration review using orchestration-security,
+sql-migration-planning and sql-compliance-review. Run guide --workflow migration
+and confirm every required domain check. Request a redacted source/target scope
+and already-approved evidence. Account for every selected STIG rule before and
+after, track provider/customer responsibility and review TLS separately. Define
+financial reconciliation, rehearsal, rollback, go/no-go and postmigration
+acceptance with named owners. Deliver unresolved blockers and an operator plan;
+do not connect, execute migration tools or sign approvals.
+```
+
+The migration workflow cannot execute a cutover. A separately governed operator
+needs the organization's approved change process. Fixed metadata reads and supported
+nullable-column additions retain their separate exact signed broker approvals.
+
+## Separate SQL TLS review
 
 Use `uv run azure-sql-agent guide --workflow nist-tls` for NIST SP 800-52.
 Azure reviews endpoint scope, provider assurance and configuration; SQL reviews
@@ -89,11 +126,3 @@ client inventory, certificate validation and negotiated crypto evidence; complia
 reviews source-clause applicability and evidence completeness. The guide identifies
 `--catalog nist-800-52` for HTML/PDF reporting. See [TLS assessment](nist-tls-review.md).
 Hooks validate routing; they do not perform live TLS tests or prove findings.
-
-## Compliance review
-
-The compliance AEF specialist reviews SQL STIG coverage, NIST TLS evidence and financial
-control applicability. `uv run azure-sql-agent guide --workflow compliance` prepares
-an offline review. `uv run azure-sql-agent stig-register --benchmark FILE` inventories
-every rule in a supplied XCCDF benchmark, initially NOT_ASSESSED. See
-[compliance coverage](compliance.md).
