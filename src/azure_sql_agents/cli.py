@@ -6,6 +6,7 @@ import os
 import sys
 from pathlib import Path
 
+from .audit_report import audit_pdf
 from .board_report import board_pdf
 from .broker import Journal, ReadBroker
 from .compliance import compliance_html, stig_register
@@ -34,6 +35,9 @@ def main():
     report.add_argument("--benchmark", type=Path, required=True)
     report.add_argument("--evidence", type=Path)
     report.add_argument("--output", type=Path, required=True)
+    report.add_argument("--format", choices=["html", "pdf"], default="html")
+    report.add_argument("--company-logo", type=Path)
+    report.add_argument("--company-name")
     workflow = sub.add_parser("guide")
     workflow.add_argument("--workflow", choices=sorted(WORKFLOWS), required=True)
     learning = sub.add_parser("learn")
@@ -82,10 +86,13 @@ def main():
             result = {"report": str(args.output), "mode": "offline_governance_briefing",
                       "live_checks": False, "compliance_claim": False}
         elif args.command == "compliance-report":
-            rendered = compliance_html(stig_register(args.benchmark), args.evidence)
+            register = stig_register(args.benchmark)
+            rendered = (audit_pdf(register, args.evidence, args.company_logo, args.company_name)
+                        if args.format == "pdf" else
+                        compliance_html(register, args.evidence).encode("utf-8"))
             # Exclusive create prevents replacing a prior evidence artifact.
             descriptor = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-            with os.fdopen(descriptor, "w", encoding="utf-8") as output:
+            with os.fdopen(descriptor, "wb") as output:
                 output.write(rendered)
             result = {"report": str(args.output), "mode": "offline", "live_checks": False}
         elif args.command == "stig-register":

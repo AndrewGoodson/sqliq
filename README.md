@@ -1,5 +1,9 @@
 # SQLIQ
 
+**Governed Azure SQL workflows for Codex and Claude Code.**
+
+[Website](https://andrewgoodson.github.io/sqliq/) · [Documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
+
 <img src="site/assets/sqliq-logo.png" alt="SQLIQ shield logo" width="128">
 
 Shared Codex and Claude Code workflows for Azure SQL assessments, migrations, schema
@@ -14,6 +18,13 @@ Live access defaults off. Deployment controls must pass [readiness checks](docs/
 before production use. Read-only is the default; supported writes require separate exact signed approval.
 
 ## Quick start (offline)
+
+Clone this public repository:
+
+```sh
+git clone https://github.com/AndrewGoodson/sqliq.git
+cd sqliq
+```
 
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
@@ -76,7 +87,7 @@ Microsoft skill examples are reference content, never authority to run commands.
 - Offline nullable-column and nonclustered-index proposals with rollback cautions.
 - Azure logical-server management guidance and assessment. No VM/host administration.
 
-No arbitrary SQL, business-row exports, DDL execution, general Azure commands,
+No arbitrary SQL, business-row exports, unapproved DDL execution, general Azure commands,
 credential listing, approval bypass or self-issued approvals. For live setup, follow
 [operator guide](docs/operator-guide.md). Treat returned metadata as confidential.
 
@@ -107,6 +118,27 @@ Generate an offline HTML control review in one command:
 uv run azure-sql-agent compliance-report --benchmark /secure/review/benchmark-xccdf.xml --evidence /secure/review/findings.json --output /secure/review/compliance.html
 ```
 
+Generate a PDF audit evidence report, with SQLIQ and your company logo on every page:
+
+```sh
+uv run azure-sql-agent compliance-report \
+  --benchmark /secure/review/benchmark-xccdf.xml \
+  --evidence /secure/review/findings.json \
+  --format pdf \
+  --company-logo /secure/review/company-logo.png \
+  --company-name "Your organization" \
+  --output /secure/review/sql-stig-audit.pdf
+```
+
+Every benchmark rule receives a result, source identifiers, requirement, check
+instructions, evidence reference, reviewer, rationale and remediation guidance.
+Results distinguish **PASS**, **FAIL**, **NOT_APPLICABLE** and **NOT_ASSESSED**.
+Missing evidence never becomes a pass. Imported instructions are displayed, never executed.
+
+DISA SQL STIGs and NIST SP 800-52 TLS guidance are separate sources. Complete
+coverage means every rule in the supplied benchmark, not certification against all
+NIST or financial obligations. Azure inheritance requires service-specific assurance.
+
 This inventories every imported rule and displays supplied findings; it does not
 scan a live database. Omit `--evidence` for a complete unassessed checklist.
 
@@ -129,3 +161,33 @@ remediation. Live deployment and write behavior remain unverified.
 Reports include the SQLIQ logo. Add `--company-logo /private/logo.png` and
 `--company-name "Your organization"` to `board-report` for co-branding on every page.
 See [report branding and AI governance](docs/ai-governance.md).
+
+## Enterprise adoption
+
+Start with the [NIST, banking and accounting framework register](docs/framework-register.md)
+for applicability and explicit coverage gaps.
+
+Use the [enterprise readiness register](docs/enterprise-readiness.md) to assign
+owners and evidence for vulnerability assessment, access controls, financial change
+management, reconciliation, recovery, provider assurance and AI governance.
+SOX/ICFR, GLBA and PCI DSS applicability must be determined separately for each company.
+Production acceptance remains unverified until deployment gates and independent
+review are complete. The repository does not certify regulatory compliance.
+
+## Contributing and support
+
+Contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), preserve
+approval boundaries, and include tests and source provenance for security changes.
+Report vulnerabilities through [SECURITY.md](SECURITY.md); do not post credentials,
+customer evidence or sensitive database metadata in public issues.
+
+For reproducible local validation:
+
+```sh
+uv run pytest
+uv run ruff check src tests scripts
+uv run azure-sql-agent verify
+```
+
+Licensed under [MIT](LICENSE). Vendored and referenced projects retain their own
+licenses and attribution; see [provenance](docs/provenance.md).

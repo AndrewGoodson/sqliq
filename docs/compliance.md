@@ -146,3 +146,21 @@ identify every STIG violation. Automated live compliance collection remains unim
 it needs individually reviewed fixed collectors, least-privilege permissions, exact
 signed approvals, evidence provenance, negative tests and deployment validation.
 No framework applies identically to all SQL databases. Establish scope first.
+
+## Control-by-control PDF audit evidence report
+
+Use `compliance-report --format pdf` with the same benchmark and evidence JSON
+as the HTML report. Both formats validate the benchmark SHA-256 and account for
+every rule, including nested and profile-unselected rules. Each rule includes
+source requirement, references/CCI identifiers, check instructions, source fix text,
+reported result, evidence, reviewer, rationale and a recommendation.
+
+```sh
+uv run azure-sql-agent compliance-report --benchmark /private/benchmark.xml --evidence /private/findings.json --format pdf --company-logo /private/logo.png --company-name "Your organization" --output /private/audit.pdf
+```
+
+Logo is optional, local PNG/JPEG only; both logos repeat on every PDF page.
+No evidence means all rules remain NOT_ASSESSED. Source instructions never execute.
+This renders operator-reported evidence; it does not automate every benchmark check
+or establish full NIST, finance, or Azure inherited-control compliance. Assigning
+Azure responsibility and obtaining supporting provider assurance remain reviewer tasks.

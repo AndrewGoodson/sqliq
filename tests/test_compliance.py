@@ -91,3 +91,39 @@ def test_report_cli_and_no_overwrite(tmp_path, monkeypatch, capsys):
     with pytest.raises(SystemExit):
         main()
     assert target.read_bytes() == before
+
+
+def test_audit_pdf_full_coverage(tmp_path):
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from azure_sql_agents.audit_report import audit_pdf
+
+    source = tmp_path / 'benchmark.xml'
+    source.write_text('''<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="demo">
+    <version>synthetic</version><Rule id="control-one" severity="high"><title>Demo</title>
+    <description>Source requirement</description><reference href="https://example.org">
+    Reference title</reference><check><check-content>Source check</check-content></check>
+    <fixtext>Source fix</fixtext><ident system="CCI">CCI-TEST</ident></Rule>
+    <Rule id="control-two"><title>Second control</title></Rule></Benchmark>''')
+    register = stig_register(source)
+    pdf = PdfReader(BytesIO(audit_pdf(register, company_name='Demo organization')))
+    text = '\n'.join(page.extract_text() for page in pdf.pages)
+    for phrase in ['control-one', 'control-two', 'Source requirement', 'Source check',
+                   'Source fix', 'CCI-TEST', 'https://example.org', 'NOT_ASSESSED: 2',
+                   'PASS: 0', 'Recommendation']:
+        assert phrase in text
+    assert all('Demo organization' in page.extract_text() for page in pdf.pages)
+    assert 'Source fix' in compliance_html(register)
+
+
+def test_audit_pdf_rejects_mismatched_evidence(tmp_path):
+    from azure_sql_agents.audit_report import audit_pdf
+
+    source = tmp_path / 'benchmark.xml'
+    source.write_bytes(XML)
+    bad = tmp_path / 'evidence.json'
+    bad.write_text('{"benchmark_sha256":"wrong","target":"demo","findings":[]}')
+    with pytest.raises(ValueError, match='benchmark mismatch'):
+        audit_pdf(stig_register(source), bad)
