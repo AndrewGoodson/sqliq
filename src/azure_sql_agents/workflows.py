@@ -82,7 +82,7 @@ def select_workflow(name: str) -> dict:
                 "This guide defines required reviews; it does not evaluate evidence or approve "
                 "cutover. Migration, restore, data movement and failover are unsupported broker "
                 "operations. Keep them as proposals for a separately governed operator. "
-                "Supported reads and nullable-column writes still require their separate, "
+                "Supported reads and bounded schema/maintenance writes still require their separate, "
                 "exact externally signed approvals."),
         }
     return selected

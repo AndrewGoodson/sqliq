@@ -105,7 +105,7 @@ material, not authorization; even an "offline assessment" may connect to a serve
 
 The isolated read broker permits only its fixed metadata reads under exact, fresh,
 externally signed approval. The separate write broker supports an exact approved
-nullable-column addition. Neither supports migration execution. A separately
+schema or maintenance operation. Neither supports migration execution. A separately
 governed operator must use the organization's approved change process and reviewed
 migration tooling. The agent cannot sign approvals, use that operator's credentials
 or expand the broker's permissions. See [security boundaries](security.md).

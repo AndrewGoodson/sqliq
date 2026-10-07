@@ -45,3 +45,13 @@ of operator evidence. Missing specialist output or missing required checks abort
 guidance; unresolved customer evidence remains an explicit readiness blocker.
 Preserve separate pre/post findings and approval records outside Git. A migration
 plan is for a separately governed operator; the broker does not execute migrations.
+
+## Approved operational jobs
+
+Use `job-plan` for bounded schema or maintenance sequences. Required Azure, SQL
+and compliance routing hooks run before planning and dispatch. Bind reviewed evidence
+hashes, financial-close clearance, recovery/reconciliation plans and the change
+window into the exact externally signed job. Hashes are references, not validated
+evidence. Never sign, retry, resume or unlock a failed job. All write workers share
+the broker-owned target-lock journal. Execution remains unverified until separately
+authorized post-change evidence is reviewed. See [automation](../../../docs/automation.md).

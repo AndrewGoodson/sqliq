@@ -23,7 +23,7 @@ def _run_specialist(domain: str, selection: dict) -> dict:
         if domain == "azure":
             detail.update({"deployment_evidence": "NOT VERIFIED"})
         elif domain == "sql":
-            detail.update({"write_execution": "separate exact signed approval; nullable-column additions only",
+            detail.update({"write_execution": "separate exact signed approval; bounded schema and maintenance templates",
                            "read_scope": "bounded system catalog metadata",
                            "principal_permissions": "DBA verification required"})
         else:

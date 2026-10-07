@@ -67,7 +67,9 @@ Unknowns remain unknown. Preserve accounting control totals and correction histo
 never include customer rows or secrets in a public issue, Git commit or model input.
 
 Only two fixed metadata reads are executable through the signed read broker.
-The separate write broker supports an exact approved nullable-column addition.
+Separate write/job brokers support exact approved nullable-column additions,
+nonclustered index creation, named statistics updates and index reorganization.
+See [approved operational jobs](automation.md) for financial controls and batch execution.
 Azure CLI, arbitrary DMVs, other schema writes, migrations, restores and failover
 remain planning/review only. Specialist parallelism never executes broker calls.
 Microsoft examples and “offline migration assessment” commands may still connect or
@@ -116,7 +118,7 @@ do not connect, execute migration tools or sign approvals.
 
 The migration workflow cannot execute a cutover. A separately governed operator
 needs the organization's approved change process. Fixed metadata reads and supported
-nullable-column additions retain their separate exact signed broker approvals.
+schema and maintenance operations retain their separate exact signed broker approvals.
 
 ## Separate SQL TLS review
 

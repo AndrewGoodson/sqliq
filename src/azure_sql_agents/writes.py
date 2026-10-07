@@ -1,12 +1,12 @@
-"""Separate exact-plan write approval. Only a nullable column addition is supported."""
+"""Separate exact-plan approval for a small, typed SQL change vocabulary."""
 from __future__ import annotations
 
 import base64
 import time
-from typing import Literal
+from typing import Annotated, Literal
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
-from pydantic import Field
+from pydantic import Field, TypeAdapter
 
 from .broker import Denied, Journal
 from .models import Approval, Policy, StrictModel, Target, canonical, digest
@@ -17,15 +17,48 @@ class WritePolicy(Policy):
     writes_enabled: bool = False
 
 
-class Change(StrictModel):
-    kind: Literal['add_nullable_column'] = 'add_nullable_column'
+class ChangeEvidence(StrictModel):
     schema_name: str
     table: str
-    column: str
-    data_type: Literal['int', 'bigint', 'bit', 'datetime2(7)', 'nvarchar(255)']
     change_ticket: str = Field(min_length=1, max_length=256)
     recovery_evidence: str = Field(min_length=1, max_length=512)
     staging_evidence: str = Field(min_length=1, max_length=512)
+
+
+class Change(ChangeEvidence):
+    # Retain the original constructor and serialized fields for existing approvals.
+    kind: Literal['add_nullable_column'] = 'add_nullable_column'
+    column: str
+    data_type: Literal['int', 'bigint', 'bit', 'datetime2(7)', 'nvarchar(255)']
+
+
+class CreateIndexChange(ChangeEvidence):
+    kind: Literal['create_index']
+    column: str
+    index: str
+
+
+class UpdateStatisticsChange(ChangeEvidence):
+    kind: Literal['update_statistics']
+    statistic: str
+
+
+class ReorganizeIndexChange(ChangeEvidence):
+    kind: Literal['reorganize_index']
+    index: str
+
+
+WriteChange = Annotated[
+    Change | CreateIndexChange | UpdateStatisticsChange | ReorganizeIndexChange,
+    Field(discriminator='kind'),
+]
+
+
+def parse_change(value: dict) -> WriteChange:
+    # Legacy input omitted kind; its only supported interpretation was nullable DDL.
+    if isinstance(value, dict) and 'kind' not in value:
+        value = {'kind': 'add_nullable_column', **value}
+    return TypeAdapter(WriteChange).validate_json(canonical(value))
 
 
 class WritePlan(StrictModel):
@@ -33,7 +66,7 @@ class WritePlan(StrictModel):
     target: Target
     policy_sha256: str
     skills_sha256: str
-    change: Change
+    change: WriteChange
     sql: str
     timeout_seconds: Literal[10] = 10
     lock_timeout_ms: Literal[5000] = 5000
@@ -43,14 +76,27 @@ class WriteApproval(Approval):
     audience: Literal['azure-sql-write-broker/v1']
 
 
-def write_plan(policy: WritePolicy, change: Change, source_hash: str) -> WritePlan:
-    for value in (change.schema_name, change.table, change.column):
-        identifier(value)
+def write_plan(policy: WritePolicy, change: WriteChange, source_hash: str) -> WritePlan:
+    # Revalidate even model_copy/model_construct inputs before rendering any SQL.
+    change = parse_change(change.model_dump(mode='json'))
+    target = f'{identifier(change.schema_name)}.{identifier(change.table)}'
     if any(not value.strip() for value in (change.change_ticket, change.recovery_evidence,
                                           change.staging_evidence)):
         raise ValueError('Review evidence required')
-    sql = propose(change.kind, change.schema_name, change.table, change.column,
-                  change.data_type)['sql']
+    if isinstance(change, Change):
+        sql = propose(change.kind, change.schema_name, change.table, change.column,
+                      change.data_type)['sql']
+    elif isinstance(change, CreateIndexChange):
+        sql = (f'CREATE NONCLUSTERED INDEX {identifier(change.index)} ON {target} '
+               f'({identifier(change.column)}) WITH (MAXDOP = 1);')
+    elif isinstance(change, UpdateStatisticsChange):
+        # Engine-selected sample; no ALL, FULLSCAN, arbitrary options or data export.
+        sql = f'UPDATE STATISTICS {target} {identifier(change.statistic)} WITH MAXDOP = 1;'
+    else:
+        # Rowstore only, avoid implicit LOB compaction. REORGANIZE can persist partial
+        # progress on cancellation: it is not undone by an enclosing rollback.
+        sql = (f'ALTER INDEX {identifier(change.index)} ON {target} '
+               'REORGANIZE WITH (LOB_COMPACTION = OFF);')
     # Policy hash binds the exact target, credential selection and approval key.
     return WritePlan(target=policy.target, policy_sha256=digest(policy), skills_sha256=source_hash,
                      change=change, sql=sql)
@@ -85,9 +131,11 @@ class WriteBroker:
         except Exception:
             raise Denied('Write denied: exact external approval required') from None
         self.journal.reserve(approval, self.policy.approver_public_key)
+        self.journal.claim_target(self.policy.target, approval.nonce)
         try:
             self.executor(self.policy, plan)
             self.journal.finish(approval.nonce, 'write_completed')
+            self.journal.release_target(self.policy.target, approval.nonce)
             return {'status': 'committed', 'plan_sha256': digest(plan)}
         except Exception:
             try:
@@ -104,12 +152,18 @@ def execute_write(policy: WritePolicy, plan: WritePlan):
     if canonical(plan) != canonical(write_plan(policy, plan.change, plan.skills_sha256)):
         raise Denied('Changed write plan')
     with approved_connection(policy, write=True) as connection:
+        connection.timeout = plan.timeout_seconds
+        if isinstance(plan.change, ReorganizeIndexChange):
+            # A fresh connection has no work to commit. Avoid an explicit enclosing
+            # transaction: REORGANIZE has different rollback/locking semantics.
+            connection.autocommit = True
         cursor = connection.cursor()
         try:
             cursor.execute('SET XACT_ABORT ON; SET LOCK_TIMEOUT 5000;')
-            # Only additive nullable DDL, no defaults, data reads, dynamic SQL or rollback DDL.
-            # Existing column/table incompatibility fails the transaction; never retry.
+            # No arbitrary SQL, dynamic SQL or automatic rollback DDL. Never retry.
+            # DDL/statistics use the connection transaction; REORGANIZE is autocommit.
             cursor.execute(plan.sql)
-            connection.commit()
+            if not isinstance(plan.change, ReorganizeIndexChange):
+                connection.commit()
         finally:
             cursor.close()

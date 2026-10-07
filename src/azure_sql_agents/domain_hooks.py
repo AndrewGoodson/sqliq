@@ -40,7 +40,7 @@ MIGRATION_COMPLIANCE_HOOKS = (
 # Reject alternative execution claims and unknown output fields at the join.
 REVIEW_BOUNDARIES = {
     "azure": {"deployment_evidence": "NOT VERIFIED"},
-    "sql": {"write_execution": "separate exact signed approval; nullable-column additions only",
+    "sql": {"write_execution": "separate exact signed approval; bounded schema and maintenance templates",
             "read_scope": "bounded system catalog metadata",
             "principal_permissions": "DBA verification required"},
     "compliance": {"compliance_claim": False,

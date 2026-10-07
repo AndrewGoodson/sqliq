@@ -23,13 +23,15 @@ manifest; they do not prove a malicious manifest safe.
 | Bound scope | Exact regenerated plan includes target, SQL, policy/source hashes, limits, output |
 | Short lifetime | Issued time <= now < expiry; validity <= 300 seconds |
 | Single use | SQLite unique nonce, durable commit before credential or network access |
-| Safe SQL vocabulary | Two fixed catalog SELECTs; parameterized row bound; no free-form SQL |
+| Safe SQL vocabulary | Two fixed catalog SELECTs plus four fixed typed write templates; no free-form SQL |
 | Azure scope | Three fixed resource GETs; no redirect following; no ambient proxy settings |
 | SQL transport | ODBC 18, TLS verification, explicit encryption; private DNS prerequisite |
 | Posture gate | Public network disabled, Entra-only enabled, TLS minimum 1.2, DB online |
 | Data minimization | Metadata only, <=100 rows, <=64 KiB serialized result |
 | Failure handling | No retry; nonce consumed on provider failure; no raw provider errors |
-| Offline changes | Small validated DDL proposal templates; separate signed-write broker for supported nullable-column additions |
+| Approved changes | Separate write/job audiences; nullable-column, single-column index, named-statistic and named-index templates |
+| Job execution | 1–10 serial steps, whole-plan signature, required readiness hashes/close clearance/window, durable step intent |
+| Write exclusion | Shared journal locks physical server/database across individual writes and jobs; unresolved outcomes retain lock |
 
 Timeouts bound individual connection/query/HTTP operations, not the total wall-clock
 run or SDK token retries. An OS/service supervisor must impose a total run deadline.
@@ -48,6 +50,11 @@ All must be independently demonstrated for each environment before production:
 - Persistent broker-owned journal on local storage (0700 directory, 0600 file).
   Every worker for an approval key/target shares one durable replay store. Do not
   deploy separate SQLite replicas or reset the store while approvals remain valid.
+- All individual-write and job workers must use one broker-owned persistent journal
+  for the same physical target; separate journal replicas bypass mutual exclusion.
+  Unknown outcomes and crashes retain target locks. No agent-accessible unlock exists;
+  trusted operators must reconcile and review recovery before any controlled release.
+  Restrict external DBA tools and alternate credentials to prevent out-of-band changes.
 - Export audit reservations and outcomes to access-controlled immutable storage.
   Current SQLite journal is durable replay protection, not a tamper-proof SIEM.
   Missing finish records mean unknown outcome and require investigation. Rejected
@@ -83,7 +90,53 @@ require new threat models, scoped identities, tests and separate approvals.
 
 ## Separate write boundary
 
-See [approved writes](approved-writes.md). The nullable-column write broker uses a
-separate audience and policy, exact signed plan, consumed nonce and transaction.
-Write identities must be separate from read identities. Live write controls remain
-unverified. A failure may occur after commit; reconcile before another approval.
+See [approved writes](approved-writes.md) and [approved jobs](automation.md).
+Individual writes and whole-plan jobs use distinct audiences, exact signed plans,
+consumed nonces and shared target locks. The supported templates add one nullable
+column, create one single-column nonunique index, update one named statistic or
+reorganize one named index. No arbitrary SQL or business-row edits are supported.
+
+Write identities must be separate from read identities. Nullable DDL, index creation
+and statistics updates use a transaction; index reorganization uses autocommit and
+can preserve partial progress after failure. Jobs are not atomic across steps.
+No automatic retry, rollback DDL or crash resume is provided. A failure can occur
+after commit; reconcile before another approval.
+
+Job readiness hashes bind privately reviewed artifacts but do not validate them.
+The reviewer must establish financial close clearance and evidence adequacy. Approval
+and window validity are checked before each step; an in-flight step is not interrupted
+solely because either expires. Successful jobs remain executed_unverified pending
+independent financial and operational reconciliation. No scheduler or model provider
+is configured. Live write controls and financial safeguards remain unverified.
+
+## Isolated write/job entrypoint
+
+Production deployments can expose `scripts/write_broker_entrypoint.py` through a
+restricted, authenticated service wrapper. It accepts one JSON request on standard
+input containing exactly `plan` and `approval`, with a 128 KiB input limit. It accepts
+no command-line overrides or request-supplied paths. Both write and job approval
+schemas are checked before dispatch; each broker then verifies the external signature,
+exact regenerated plan, policy, source integrity, freshness and durable nonce.
+
+The installed entrypoint uses fixed, deployment-owned locations:
+
+| Location | Purpose |
+|---|---|
+| `/opt/azure-sql-agents` | Reviewed installation and source manifest |
+| `/etc/azure-sql-agents/write-policy.json` | Write policy and pinned reviewer public key |
+| `/var/lib/azure-sql-agents` | Shared durable journal for read, write and job endpoints |
+
+The policy must select `managed_identity`; the entrypoint rejects Azure CLI credentials.
+Standalone writes and jobs use the same journal and physical-target lock. Run all
+workers against that one store. The agent must have no write access to installation,
+policy, journal or service configuration and no access to the broker identity or an
+alternate execution path. Do not expose the developer CLI, which permits explicit
+paths, as an agent-facing production API. Do not launch this script under an
+agent-controlled Python environment, module search path or working directory.
+
+The service wrapper must provide authentication, authorized reviewer routing, rate
+limits, total deadlines, private networking and protected audit/status access. No
+service installation, managed identity provisioning, scheduler or signing service is
+performed by this script. It emits generic errors without provider details; operators
+must inspect the protected journal and independently reconcile unresolved outcomes.
+These deployment controls and live behavior remain unverified.

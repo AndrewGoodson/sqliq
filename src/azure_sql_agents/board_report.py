@@ -118,7 +118,7 @@ def board_pdf(company_logo: Path | None = None, company_name: str | None = None)
     section('Authority stays with people',
             'Live reads default to disabled and require an exact, fresh, externally signed approval. '
             'The read broker permits bounded catalog metadata reads. Writes need separate exact signed approval. '
-            'Only nullable-column additions are supported. AI cannot sign, grant itself access or promote learned '
+            'Only fixed schema and maintenance templates are supported. AI cannot sign, grant itself access or promote learned '
             'candidates. Deployment isolation must be independently demonstrated.')
     section('Board oversight',
             'Assign an accountable executive, IT control owner and independent reviewer. Require '

@@ -59,4 +59,4 @@ control owners and independent reviewers.
 Production identity, approval-key custody, network access, audit retention,
 restore/cutover behavior and legal applicability must be validated in the deployment.
 Migration, provisioning and general DDL execution are not implemented. The write
-broker supports only separately approved nullable-column additions.
+and job brokers support separately approved fixed schema and maintenance operations.

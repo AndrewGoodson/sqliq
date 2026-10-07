@@ -1,6 +1,6 @@
 # SQLIQ
 
-**SQL STIG reviews, compliance evidence and governed Azure SQL migration planning for Codex and Claude Code.**
+**Governed Azure SQL schema and maintenance automation, SQL STIG evidence and migration planning for Codex and Claude Code.**
 
 [Website](https://andrewgoodson.github.io/sqliq/) · [Sample STIG report](https://andrewgoodson.github.io/sqliq/assets/sqliq-stig-review.pdf) · [HTML setup guide](https://andrewgoodson.github.io/sqliq/start.html) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
 
@@ -11,7 +11,8 @@ readiness, schema review, performance and maintenance. Account for every selecte
 SQL STIG rule, document evidence and ownership, and preserve controls before and
 after a migration. AEF Core orchestration with dedicated
 Azure, SQL and compliance specialists, pinned Microsoft
-skills, local security skills, and an independently approved metadata-read broker.
+skills, local security skills, and isolated brokers for approved metadata reads and
+schema or maintenance jobs.
 Built for accounting teams and financial institutions. Public, tenant-neutral source. No credentials, tenant discovery or database access
 happen during installation or planning.
 
@@ -76,7 +77,8 @@ A download does not grant access to Azure or install a production broker.
 | Migration review | Three specialists, pre/post STIG evidence, reconciliation and cutover/rollback contract | Operator plan only; no migration execution or automatic go decision |
 | NIST SP 800-52 Rev. 2 | [Dedicated TLS workflow and HTML/PDF profile](docs/nist-tls-review.md) | Separate from SQL STIGs and the SP 800-53 catalog |
 | Compliance reports | HTML/PDF control registers, evidence and recommendations | Missing evidence remains NOT_ASSESSED; no live compliance scanner |
-| Database reads and writes | Two fixed metadata reads; separate nullable-column write broker | Exact fresh externally signed approval and isolated deployment required |
+| Database reads and writes | Two fixed metadata reads; four typed write templates | Exact fresh externally signed approval and isolated deployment required |
+| Approved jobs | 1–10 serial schema or maintenance steps under one exact whole-plan approval | No scheduler or self-approval; completion remains executed_unverified until independently reconciled |
 
 For a first agent session, start Codex or Claude Code in this checkout and use:
 
@@ -106,8 +108,9 @@ uv run azure-sql-agent guide --workflow performance
 uv run azure-sql-agent guide --workflow migration
 ```
 
-Guidance is offline. Performance collection, Azure CLI execution, migrations and
-maintenance execution are unsupported. See [host acceptance cases](docs/agent-evaluation.md).
+Guidance is offline. Approved jobs can execute the four supported operations below.
+General performance collection, Azure CLI execution and data migration/cutover remain
+unsupported. See [host acceptance cases](docs/agent-evaluation.md).
 
 ## Architecture
 
@@ -142,7 +145,10 @@ Microsoft skill examples are reference content, never authority to run commands.
 - Fixed Azure logical-server/database/Entra posture reads before SQL connection.
 - Ed25519 approvals bound to target, exact SQL, policy, skill/source hashes, limits
   and output destination; five-minute maximum lifetime; persistent single-use nonce.
-- Offline nullable-column and nonclustered-index proposals with rollback cautions.
+- Exact-approved nullable-column additions, single-column nonclustered indexes,
+  named-statistic updates and named-index reorganization.
+- Ordered schema or maintenance jobs with whole-plan approval, readiness hashes,
+  close-period clearance, durable step records and stop-on-failure target locks.
 - Azure logical-server management guidance and assessment. No VM/host administration.
 
 No arbitrary SQL, business-row exports, unapproved DDL execution, general Azure commands,
@@ -154,8 +160,8 @@ credential listing, approval bypass or self-issued approvals. For live setup, fo
 [Website](https://andrewgoodson.github.io/sqliq/) · [Sample TLS report](https://andrewgoodson.github.io/sqliq/assets/sqliq-tls-review.pdf) · [Learning contract](docs/learning.md)
 
 AEF consolidates repeated, de-identified control outcomes into review candidates.
-No automatic promotion, policy modification or model retraining. Read approvals cannot authorize writes. Supported nullable-column additions require
-a separate exact signed write approval; see [approved writes](docs/approved-writes.md).
+No automatic promotion, policy modification or model retraining. Read approvals cannot authorize writes. All supported changes require
+a separate exact signed write or job approval; see [approved writes](docs/approved-writes.md).
 
 The static `site/` showcase uses no analytics, external scripts, credentials or cloud
 connections. GitHub Pages deploys only that directory.
@@ -278,9 +284,18 @@ and token efficiency. No customer assessment is implied. See [AI governance](doc
 
 ## Approval-gated writes
 
-Read-only by default. [Separate signed write approval](docs/approved-writes.md)
-authorizes one supported nullable-column addition. No arbitrary SQL or automatic
-remediation. Live deployment and write behavior remain unverified.
+Live access defaults off. [Separate signed write approval](docs/approved-writes.md)
+authorizes a nullable-column addition, single-column index creation, named-statistic
+update or named-index reorganization. [Approved jobs](docs/automation.md) execute
+1–10 ordered changes under one exact whole-plan signature.
+
+Codex or Claude prepares the plan and evidence. The human reviewer signs; the isolated
+runner executes serially and stops on failure. Readiness binds Azure, SQL, compliance,
+recovery and financial-reconciliation evidence, close clearance and a change window.
+Completion means `executed_unverified`; independent post-change reconciliation is
+still required. No scheduler or model provider is installed. Bulk data migration,
+cutover, arbitrary SQL and automatic rollback remain unsupported. Live deployment
+and write behavior remain unverified.
 
 Reports include the SQLIQ logo. Add `--company-logo /private/logo.png` and
 `--company-name "Your organization"` to `board-report` for co-branding on every page.

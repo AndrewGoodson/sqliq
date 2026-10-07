@@ -50,7 +50,7 @@ returned migration contract and required check identifiers before reviewing evid
 This workflow produces a plan, not a migration executor or approval. No BACPAC
 export/import, migration service creation, connection, schema deployment, cutover
 or source retirement. The signed read broker supports only fixed metadata reads;
-the separate signed write broker supports only approved nullable-column additions.
+the separate signed write broker supports fixed approved schema and maintenance operations, not data movement or cutover.
 Migration execution belongs to a separately governed operator and change process.
 
 ## Reference material

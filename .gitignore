@@ -37,3 +37,8 @@ tls-review.html
 tls-review.pdf
 stig-review.html
 stig-review.pdf
+
+# Private approved automation requests and signatures.
+job-request*.json
+job-plan*.json
+job-approval*.json

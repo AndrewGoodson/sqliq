@@ -13,11 +13,16 @@ from typing import Callable
 from aef.security.tool import Tool
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
-from .models import Approval, Plan, Policy, canonical, digest, make_plan
+from .models import Approval, Plan, Policy, Target, canonical, digest, make_plan
 
 
 class Denied(RuntimeError):
     pass
+
+
+def target_key(target: Target) -> str:
+    # Public Azure SQL server DNS names are globally unique. Ignore ARM path aliases.
+    return digest({"server": target.server.lower(), "database": target.database.casefold()})
 
 
 class Journal:
@@ -42,6 +47,21 @@ class Journal:
             db.execute("CREATE TABLE IF NOT EXISTS approvals "
                        "(nonce TEXT PRIMARY KEY, plan_hash TEXT NOT NULL, "
                        "key_hash TEXT NOT NULL, at INTEGER NOT NULL, status TEXT NOT NULL)")
+
+            db.execute("CREATE TABLE IF NOT EXISTS job_targets "
+                       "(target_hash TEXT PRIMARY KEY, job_id TEXT UNIQUE NOT NULL)")
+
+    def claim_target(self, target: Target, owner: str):
+        try:
+            with self.connect() as db:
+                db.execute("INSERT INTO job_targets VALUES (?, ?)", (target_key(target), owner))
+        except sqlite3.Error:
+            raise Denied("Target busy or requires reconciliation; approval consumed") from None
+
+    def release_target(self, target: Target, owner: str):
+        with self.connect() as db:
+            db.execute("DELETE FROM job_targets WHERE target_hash=? AND job_id=?",
+                       (target_key(target), owner))
 
     @contextmanager
     def connect(self):

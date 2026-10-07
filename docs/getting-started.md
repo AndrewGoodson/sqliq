@@ -104,7 +104,8 @@ broker privileges. Natural-language permission alone cannot authorize execution:
 the human reviewer signs the exact fresh plan through the external approval process.
 
 The read broker supports schema/index metadata only. The [separate write broker](approved-writes.md)
-supports an approved nullable-column addition. Other DDL, performance collection,
+supports exact approved schema and maintenance templates, including ordered jobs
+([automation guide](automation.md)). Other DDL, performance collection,
 Azure CLI actions, migrations, restores and failovers remain reviewed proposals for
 the company's authorized change process. Writes are approval-controlled.
 
