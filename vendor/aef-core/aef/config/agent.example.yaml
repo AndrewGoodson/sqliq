@@ -1,0 +1,38 @@
+# Template agent config — copy this, then fill in the five fields that are
+# allowed to differ per agent: Knowledge (memory/knowledge_graph), Policies,
+# Tools, Objectives, Evaluation Metrics (evaluator). Everything else is
+# inherited from the scaffold (report §16 / CLAUDE.md).
+
+extends: _base
+
+model_provider:
+  impl: claude_code  # the coding agent's own login, no API key; or codex / anthropic
+  model: claude-opus-5-5  # a real current ID; claude-fable-5-1 for the hardest long-horizon work
+  fallback: []
+
+memory:
+  impl: in_memory
+
+# knowledge_graph: omitted, and it is not merely commented out — the schema
+# REFUSES the block, because nothing builds a knowledge graph yet and a field
+# that validates while being read by nothing lets an owner believe otherwise
+# (ADR 0100). What it needs first is a retrieval contract the node signature
+# does not carry: a query interface, a result shape the context engine can
+# budget, and a provenance story for retrieved facts.
+
+evaluator:
+  suites: []
+
+tools:
+  allow: []
+  # sandbox: gvisor
+  # creds: managed_identity
+
+policies:
+  require_hitl_above_risk: 0.0
+  forbid: []
+
+objectives: "TODO: describe this agent's objective in one or two sentences."
+
+evolution:
+  enabled: false  # must stay false; see docs/roadmap.md Phase 4

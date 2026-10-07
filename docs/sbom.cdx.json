@@ -1,0 +1,412 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "serialNumber": "urn:uuid:ca77f253-9bbf-45df-bb75-94a324851636",
+  "metadata": {
+    "timestamp": "2026-10-07T01:27:36.560627000Z",
+    "tools": [
+      {
+        "vendor": "Astral Software Inc.",
+        "name": "uv",
+        "version": "0.11.28"
+      }
+    ],
+    "component": {
+      "type": "library",
+      "bom-ref": "azure-sql-agents-1@0.1.0",
+      "name": "azure-sql-agents",
+      "version": "0.1.0",
+      "properties": [
+        {
+          "name": "uv:package:is_project_root",
+          "value": "true"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "aef-core-2@0.1.0",
+      "name": "aef-core",
+      "version": "0.1.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "annotated-types-3@0.8.0",
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "purl": "pkg:pypi/annotated-types@0.8.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "anyio-4@4.15.1",
+      "name": "anyio",
+      "version": "4.15.1",
+      "purl": "pkg:pypi/anyio@4.15.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "azure-core-5@1.41.0",
+      "name": "azure-core",
+      "version": "1.41.0",
+      "purl": "pkg:pypi/azure-core@1.41.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "azure-identity-6@1.26.0",
+      "name": "azure-identity",
+      "version": "1.26.0",
+      "purl": "pkg:pypi/azure-identity@1.26.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "certifi-7@2026.7.22",
+      "name": "certifi",
+      "version": "2026.7.22",
+      "purl": "pkg:pypi/certifi@2026.7.22"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cffi-8@2.1.1",
+      "name": "cffi",
+      "version": "2.1.1",
+      "purl": "pkg:pypi/cffi@2.1.1",
+      "properties": [
+        {
+          "name": "uv:package:marker",
+          "value": "platform_python_implementation != 'PyPy'"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "charset-normalizer-9@3.5.2",
+      "name": "charset-normalizer",
+      "version": "3.5.2",
+      "purl": "pkg:pypi/charset-normalizer@3.5.2"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cryptography-10@50.0.2",
+      "name": "cryptography",
+      "version": "50.0.2",
+      "purl": "pkg:pypi/cryptography@50.0.2"
+    },
+    {
+      "type": "library",
+      "bom-ref": "h11-11@0.16.0",
+      "name": "h11",
+      "version": "0.16.0",
+      "purl": "pkg:pypi/h11@0.16.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "httpcore-12@1.0.9",
+      "name": "httpcore",
+      "version": "1.0.9",
+      "purl": "pkg:pypi/httpcore@1.0.9"
+    },
+    {
+      "type": "library",
+      "bom-ref": "httpx-13@0.28.1",
+      "name": "httpx",
+      "version": "0.28.1",
+      "purl": "pkg:pypi/httpx@0.28.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "idna-14@3.20",
+      "name": "idna",
+      "version": "3.20",
+      "purl": "pkg:pypi/idna@3.20"
+    },
+    {
+      "type": "library",
+      "bom-ref": "msal-15@1.39.0",
+      "name": "msal",
+      "version": "1.39.0",
+      "purl": "pkg:pypi/msal@1.39.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "msal-extensions-16@1.3.1",
+      "name": "msal-extensions",
+      "version": "1.3.1",
+      "purl": "pkg:pypi/msal-extensions@1.3.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "opentelemetry-api-17@1.45.1",
+      "name": "opentelemetry-api",
+      "version": "1.45.1",
+      "purl": "pkg:pypi/opentelemetry-api@1.45.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "opentelemetry-sdk-18@1.45.1",
+      "name": "opentelemetry-sdk",
+      "version": "1.45.1",
+      "purl": "pkg:pypi/opentelemetry-sdk@1.45.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "opentelemetry-semantic-conventions-19@0.66b1",
+      "name": "opentelemetry-semantic-conventions",
+      "version": "0.66b1",
+      "purl": "pkg:pypi/opentelemetry-semantic-conventions@0.66b1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pycparser-20@3.0",
+      "name": "pycparser",
+      "version": "3.0",
+      "purl": "pkg:pypi/pycparser@3.0",
+      "properties": [
+        {
+          "name": "uv:package:marker",
+          "value": "implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pydantic-21@2.13.5",
+      "name": "pydantic",
+      "version": "2.13.5",
+      "purl": "pkg:pypi/pydantic@2.13.5"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pydantic-core-22@2.46.5",
+      "name": "pydantic-core",
+      "version": "2.46.5",
+      "purl": "pkg:pypi/pydantic-core@2.46.5"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pyjwt-23@2.15.1",
+      "name": "pyjwt",
+      "version": "2.15.1",
+      "purl": "pkg:pypi/pyjwt@2.15.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pyodbc-24@5.3.0",
+      "name": "pyodbc",
+      "version": "5.3.0",
+      "purl": "pkg:pypi/pyodbc@5.3.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pyyaml-25@6.0.3",
+      "name": "pyyaml",
+      "version": "6.0.3",
+      "purl": "pkg:pypi/pyyaml@6.0.3"
+    },
+    {
+      "type": "library",
+      "bom-ref": "requests-26@2.34.2",
+      "name": "requests",
+      "version": "2.34.2",
+      "purl": "pkg:pypi/requests@2.34.2"
+    },
+    {
+      "type": "library",
+      "bom-ref": "typing-extensions-27@4.16.0",
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "purl": "pkg:pypi/typing-extensions@4.16.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "typing-inspection-28@0.4.4",
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "purl": "pkg:pypi/typing-inspection@0.4.4"
+    },
+    {
+      "type": "library",
+      "bom-ref": "urllib3-29@2.8.0",
+      "name": "urllib3",
+      "version": "2.8.0",
+      "purl": "pkg:pypi/urllib3@2.8.0"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "aef-core-2@0.1.0",
+      "dependsOn": [
+        "opentelemetry-api-17@1.45.1",
+        "opentelemetry-sdk-18@1.45.1",
+        "pydantic-21@2.13.5",
+        "pyyaml-25@6.0.3"
+      ]
+    },
+    {
+      "ref": "annotated-types-3@0.8.0"
+    },
+    {
+      "ref": "anyio-4@4.15.1",
+      "dependsOn": [
+        "idna-14@3.20",
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "azure-core-5@1.41.0",
+      "dependsOn": [
+        "requests-26@2.34.2",
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "azure-identity-6@1.26.0",
+      "dependsOn": [
+        "azure-core-5@1.41.0",
+        "cryptography-10@50.0.2",
+        "msal-15@1.39.0",
+        "msal-extensions-16@1.3.1",
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "azure-sql-agents-1@0.1.0",
+      "dependsOn": [
+        "aef-core-2@0.1.0",
+        "azure-identity-6@1.26.0",
+        "cryptography-10@50.0.2",
+        "httpx-13@0.28.1",
+        "pydantic-21@2.13.5",
+        "pyodbc-24@5.3.0"
+      ]
+    },
+    {
+      "ref": "certifi-7@2026.7.22"
+    },
+    {
+      "ref": "cffi-8@2.1.1",
+      "dependsOn": [
+        "pycparser-20@3.0"
+      ]
+    },
+    {
+      "ref": "charset-normalizer-9@3.5.2"
+    },
+    {
+      "ref": "cryptography-10@50.0.2",
+      "dependsOn": [
+        "cffi-8@2.1.1"
+      ]
+    },
+    {
+      "ref": "h11-11@0.16.0"
+    },
+    {
+      "ref": "httpcore-12@1.0.9",
+      "dependsOn": [
+        "certifi-7@2026.7.22",
+        "h11-11@0.16.0"
+      ]
+    },
+    {
+      "ref": "httpx-13@0.28.1",
+      "dependsOn": [
+        "anyio-4@4.15.1",
+        "certifi-7@2026.7.22",
+        "httpcore-12@1.0.9",
+        "idna-14@3.20"
+      ]
+    },
+    {
+      "ref": "idna-14@3.20"
+    },
+    {
+      "ref": "msal-15@1.39.0",
+      "dependsOn": [
+        "cryptography-10@50.0.2",
+        "pyjwt-23@2.15.1",
+        "requests-26@2.34.2"
+      ]
+    },
+    {
+      "ref": "msal-extensions-16@1.3.1",
+      "dependsOn": [
+        "msal-15@1.39.0"
+      ]
+    },
+    {
+      "ref": "opentelemetry-api-17@1.45.1",
+      "dependsOn": [
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "opentelemetry-sdk-18@1.45.1",
+      "dependsOn": [
+        "opentelemetry-api-17@1.45.1",
+        "opentelemetry-semantic-conventions-19@0.66b1",
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "opentelemetry-semantic-conventions-19@0.66b1",
+      "dependsOn": [
+        "opentelemetry-api-17@1.45.1",
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "pycparser-20@3.0"
+    },
+    {
+      "ref": "pydantic-21@2.13.5",
+      "dependsOn": [
+        "annotated-types-3@0.8.0",
+        "pydantic-core-22@2.46.5",
+        "typing-extensions-27@4.16.0",
+        "typing-inspection-28@0.4.4"
+      ]
+    },
+    {
+      "ref": "pydantic-core-22@2.46.5",
+      "dependsOn": [
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "pyjwt-23@2.15.1",
+      "dependsOn": [
+        "cryptography-10@50.0.2"
+      ]
+    },
+    {
+      "ref": "pyodbc-24@5.3.0"
+    },
+    {
+      "ref": "pyyaml-25@6.0.3"
+    },
+    {
+      "ref": "requests-26@2.34.2",
+      "dependsOn": [
+        "certifi-7@2026.7.22",
+        "charset-normalizer-9@3.5.2",
+        "idna-14@3.20",
+        "urllib3-29@2.8.0"
+      ]
+    },
+    {
+      "ref": "typing-extensions-27@4.16.0"
+    },
+    {
+      "ref": "typing-inspection-28@0.4.4",
+      "dependsOn": [
+        "typing-extensions-27@4.16.0"
+      ]
+    },
+    {
+      "ref": "urllib3-29@2.8.0"
+    }
+  ]
+}

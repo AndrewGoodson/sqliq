@@ -1,0 +1,42 @@
+# Azure Security posture-review agent: read-only, managed-identity
+# credentials, no destructive tool scopes, HITL required above risk 0.7.
+
+extends: _base
+
+model_provider:
+  impl: claude_code  # the coding agent's own login, no API key; or codex / anthropic
+  model: claude-opus-5-5  # a real current ID; claude-fable-5-1 for the hardest long-horizon work
+  fallback: [local-llama]
+
+memory:
+  impl: in_memory
+
+# knowledge_graph: REMOVED, and the removal is the point. This block declared
+# `impl: neo4j` while no code has ever constructed a knowledge graph — the
+# config said the agent had one and the runtime never gave it one. The schema
+# now refuses the block rather than validating a claim nothing honours.
+# Restore it when there is a builder to name (ADR 0100).
+
+evaluator:
+  # A suite is a `module:function` reference, resolved and CALLED as a domain
+  # gate. It was the bare name `private_azure_pentest` here, which named
+  # nothing resolvable — harmless only for as long as the field was read by
+  # nothing (ADR 0100).
+  suites: []
+
+tools:
+  allow: [az_cli_ro, kql_query]
+  sandbox: gvisor
+  creds: managed_identity
+
+policies:
+  require_hitl_above_risk: 0.7
+  forbid: [resource_delete, resource_create, role_assignment_write]
+
+objectives: >
+  Identify misconfigurations and privilege-escalation paths across the
+  target Azure subscription. Read-only: no remediation, no resource
+  mutation, no credential creation.
+
+evolution:
+  enabled: false  # must stay false; see docs/roadmap.md Phase 4

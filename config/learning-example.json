@@ -1,0 +1,4 @@
+{"outcomes":[
+  {"run_id":"00000000-0000-0000-0000-000000000001","agent":"sql","control":"metadata_scope","outcome":"failure"},
+  {"run_id":"00000000-0000-0000-0000-000000000002","agent":"sql","control":"metadata_scope","outcome":"failure"}
+]}

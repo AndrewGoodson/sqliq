@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "live_enabled": false,
+  "target": {
+    "tenant": "00000000-0000-0000-0000-000000000000",
+    "subscription": "00000000-0000-0000-0000-000000000000",
+    "resource_group": "example-rg",
+    "server": "example-sql",
+    "database": "exampledb"
+  },
+  "approver_public_key": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+  "identity": "managed_identity",
+  "managed_identity_client_id": null,
+  "max_rows": 100
+}

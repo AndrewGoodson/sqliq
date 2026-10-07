@@ -1,0 +1,80 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aef-core"
+version = "0.1.0"
+description = "Agent Engineering Foundation: a repo-agnostic Agent Operating System scaffold"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "pydantic>=2.9,<3",
+    "pyyaml>=6.0,<7",
+    "opentelemetry-api>=1.27,<2",
+    "opentelemetry-sdk>=1.27,<2",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.34,<1"]
+mem0 = ["mem0ai>=0.1,<3"]
+# Optional: exercises Mem0Adapter against a REAL, fully-local mem0.Memory()
+# (fastembed embedder + faiss vector store, zero network calls once the
+# embedding model is cached, zero LLM API key actually invoked). Not part
+# of the default dev install or CI — opt in with `pip install -e ".[mem0,mem0-integration]"`
+# and run tests/services/memory/test_mem0_adapter_integration.py directly.
+mem0-integration = ["fastembed>=0.4,<1", "faiss-cpu>=1.8,<2"]
+dev = [
+    # Already the build backend; needed by the offline installed-wheel regression (ADR 0207).
+    "hatchling",
+    "pytest>=8.3,<10",
+    "ruff>=0.6,<1",
+    "mypy>=1.11,<3",
+    "types-PyYAML>=6.0,<7",
+]
+
+[project.scripts]
+aef = "aef.cli.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["aef"]
+# PEP 561. Without the marker, `mypy --strict` in an adopting repo reports
+# every `from aef... import` as `module is installed, but missing library
+# stubs or py.typed marker` — so the green bar this project mandates for its
+# adopters was impossible for them to pass (ADR 0079). Invisible here,
+# because aef-core type-checks its own source tree rather than the wheel.
+artifacts = ["aef/py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "TID"]
+# Vendor-SDK import isolation (constraint #3) is enforced ONLY by the
+# path-aware AST scan in tests/test_vendor_isolation.py (run in CI). Ruff's
+# TID rules are enabled for general import hygiene, NOT for vendor isolation:
+# TID251 (banned-api) needs an explicit banned-api mapping (none is set) and
+# is global anyway, so it cannot express "banned except under providers/".
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+namespace_packages = true
+explicit_package_bases = true
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: end-to-end pipeline runs (N+2 corpus passes in subprocesses)",
+    # The executable red team (ADR 0194). Every test under tests/adversarial/
+    # carries it, applied by that directory's conftest rather than by hand, so
+    # `pytest -m adversarial` cannot silently run less than the suite.
+    "adversarial: builds a hostile input, runs it through the real control, and mutates the control away",
+]
+testpaths = ["tests"]
+# Multiple test dirs share basenames (e.g. tests/state/test_schema.py and
+# tests/config/test_schema.py); importlib mode keys modules by full path
+# instead of colliding on basename, so no __init__.py-per-dir is needed.
+addopts = "--import-mode=importlib"

@@ -1,0 +1,23 @@
+name: security-checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          version: '0.11.28'
+          enable-cache: false
+      - run: uv sync --locked --python 3.11 --all-extras
+      - run: uv run ruff check src tests scripts
+      - run: uv run pytest -q
+      - run: uv run azure-sql-agent verify
+      - run: uv run pip-audit --local --skip-editable
