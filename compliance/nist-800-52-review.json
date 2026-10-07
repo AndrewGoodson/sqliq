@@ -1,0 +1,784 @@
+{
+  "benchmark_id": "SQLIQ NIST SP 800-52 Rev. 2 SQL TLS review profile",
+  "version": "1.0",
+  "provenance": "SQLIQ-authored assessment aid; reviewed against NIST and Microsoft sources on 2026-10-06. SQLIQ IDs are not official NIST control IDs. NIST publication page has a review notice; verify the adopted revision at assessment time.",
+  "scope": "18 section-level review items covering server sections 3.1-3.8, client sections 4.1-4.8 and applicability of appendices C and D. Not an exhaustive clause register, official NIST control catalog, automated scan or certification. Review all applicable source clauses before assigning any item PASS.",
+  "source_url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+  "publication_url": "https://csrc.nist.gov/pubs/sp/800/52/r2/final",
+  "controls": [
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-PROTOCOLS",
+      "title": "Server protocol support",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.1 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Record the SQL service, region, endpoint, minimum TLS setting, supported protocols and dated TDS-aware connection evidence for each application path. Distinguish supported, permitted and negotiated protocols.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Plan compatible service and driver upgrades; test TLS 1.3 support and enforce the approved protocol policy only through a separately approved change."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.1"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.1"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-CERTIFICATES",
+      "title": "Server keys and certificates",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.2 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Obtain service-specific certificate lifecycle and key assurance; record certificate profile, chain, validity, signature and endpoint identity. Review all subsections, including client-certificate revocation applicability.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Assign provider certificate evidence gaps and renewal issues to the service owner; do not replace certificate validation with TrustServerCertificate."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.2"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.2"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-CRYPTOGRAPHY",
+      "title": "Server cryptography",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.3 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Request negotiated cipher evidence and provider assurance for the exact cryptographic implementation. Match module certificate, version, operational environment and validation status; a generic Azure compliance claim is insufficient.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Document unsupported cipher or validation requirements; escalate provider-controlled gaps and test approved configuration changes on customer-controlled SQL Server systems."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.3"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.3"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-EXTENSIONS",
+      "title": "Server extensions",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.4 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Have the service owner map every applicable extension clause and conditional trigger to implementation assurance and SQL connection evidence. Record opaque provider behavior as an evidence gap.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Request missing provider evidence; track client compatibility and supported remediation before changing endpoint or network configuration."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.4"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.4"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-CLIENT-AUTHENTICATION",
+      "title": "TLS client authentication at the server",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.5 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Determine whether TLS client-certificate authentication is applicable and supported for this SQL service. SQL login or Entra authentication alone is not evidence of TLS client-certificate validation. Review path validation, trust anchors and key-size handling where applicable.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Document the architecture and reviewer-approved applicability rationale; remedy applicable trust or validation gaps without substituting database authentication evidence."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.5"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.5"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-SESSION-RESUMPTION",
+      "title": "Server session resumption and early data",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.6 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Request provider or SQL host evidence for resumption, tickets and early-data behavior. Include connection pooling and reconnection paths in the approved test scope.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Resolve undocumented session behavior with provider support; assess replay-sensitive financial operations and stage supported mitigations."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.6"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.6"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-COMPRESSION",
+      "title": "Server TLS compression",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.7 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Obtain implementation or negotiation evidence for TLS compression behavior on SQL endpoints. Do not substitute SQL page, backup or network application compression settings.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Remediate incompatible TLS compression behavior through the endpoint owner and validate with approved SQL connections."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.7"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.7"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-SERVER-OPERATIONS",
+      "title": "Server operational considerations",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 3.8 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Map all operational clauses to service ownership, configuration baselines and current evidence; include endpoint changes, key lifecycle and drift review appropriate to the SQL deployment.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Assign unresolved operational clauses to named owners, with evidence deadlines, staging validation and recovery plans."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 3.8"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "3.8"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-PROTOCOLS",
+      "title": "SQL client protocol support",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.1 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Inventory application, ETL, BI, accounting connector and administration clients with driver and OS versions. Collect approved connection-test evidence for each distinct path; a successful connection does not identify its protocol.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Upgrade incompatible drivers and operating systems; test reconnect, pooling and accounting batch workloads before tightening TLS settings."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.1"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.1"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-CERTIFICATES",
+      "title": "Client keys and certificates",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.2 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Review client certificate requirements and all subsections, including server-certificate revocation behavior. Record driver and OS configuration, applicable certificate/key protection and lifecycle evidence.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Repair applicable key lifecycle and revocation gaps using supported driver and platform behavior; document unsupported features and residual risk."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.2"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.2"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-CRYPTOGRAPHY",
+      "title": "Client cryptography",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.3 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Identify the actual TLS library/module used by each SQL driver and platform. Map cipher behavior and validation scope to the relevant implementation, not merely the driver product name.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Upgrade or reconfigure incompatible client crypto implementations in staging; retain module validation and negotiated connection evidence."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.3"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.3"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-EXTENSIONS",
+      "title": "Client extensions",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.4 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Map applicable extension clauses to each SQL driver and underlying TLS stack. Include endpoint naming and connection routing used by applications, ETL and reporting services.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Remediate extension incompatibilities through supported driver/platform releases and retest the actual SQL connection paths."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.4"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.4"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-SERVER-AUTHENTICATION",
+      "title": "Server identity validation by SQL clients",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.5 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Inspect redacted connection configuration and approved positive/negative test evidence for chain and hostname validation, trust anchors and certificate errors. Record encryption mode, TrustServerCertificate and certificate-name overrides. Never weaken a production connection to gather evidence.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Require validated encrypted connections under the approved policy; repair certificates, trust or endpoint names rather than suppressing validation errors. Test rejected invalid identities in an isolated approved environment."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.5"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.5"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-SESSION-RESUMPTION",
+      "title": "Client resumption and early data",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.6 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Request driver/platform evidence for session resumption and early data, including pooled and retried connections. Map every applicable clause for each supported client stack.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Resolve client session and replay concerns with application owners; test transaction retry behavior and financial reconciliation before deployment."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.6"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.6"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-COMPRESSION",
+      "title": "Client TLS compression",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.7 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Obtain evidence for TLS compression in each client TLS stack. Separate TLS compression from result-set, transport and application compression features.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Update or configure affected client stacks under change control and verify the approved SQL connection behavior."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.7"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.7"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-CLIENT-OPERATIONS",
+      "title": "Client operational considerations",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 4.8 to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Map all client operational clauses to driver deployment, trust-store ownership, configuration distribution and ongoing evidence collection. Include unattended jobs and administration tools.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Assign application and platform owners; stage driver/trust updates and monitor reconnection failures and accounting job outcomes."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 4.8"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "4.8"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "Customer application/platform owners usually supply client configuration and driver evidence, including clients connecting to PaaS. Validate any provider-managed client separately.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-PRE-SHARED-KEYS",
+      "title": "Pre-shared key applicability",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 Appendix C to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Determine whether TLS pre-shared keys are used and distinguish them from SQL passwords or Azure access tokens. Record the service/driver architecture and applicable appendix clauses.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "If applicable, obtain key lifecycle and implementation evidence; otherwise document a technical rationale and independent applicability review."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 Appendix C"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "Appendix C"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    },
+    {
+      "rule_id": "SQLIQ-TLS-RSA-KEY-TRANSPORT",
+      "title": "RSA key transport applicability",
+      "version": "1.0",
+      "severity": "Not ranked; SQLIQ review item",
+      "requirement": "SQLIQ review task: map all applicable clauses of NIST SP 800-52 Rev. 2 Appendix D to the exact SQL service and client implementation. The publication is authoritative; this task is not a substitute for its clauses.",
+      "checks": [
+        "Determine whether negotiated cipher suites use RSA key transport. An RSA certificate alone does not establish use of RSA key transport. Review applicable appendix guidance with cryptographic owners.",
+        "Retain clause-by-clause applicability, evidence IDs and timestamps, accountable owner, reviewer and recommendation in the private evidence package. Unresolved clauses prevent a PASS for this review item."
+      ],
+      "fixes": [
+        "Record negotiation evidence, compatibility constraints and an approved transition proposal for unsuitable key transport."
+      ],
+      "references": [
+        {
+          "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf",
+          "text": "NIST SP 800-52 Rev. 2 Appendix D"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db",
+          "text": "Microsoft Azure SQL Database connectivity; confirm applicability to the selected service"
+        },
+        {
+          "href": "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+          "text": "Microsoft shared responsibility; no automatic inherited pass"
+        }
+      ],
+      "identifiers": [
+        {
+          "system": "NIST SP 800-52 Rev. 2 source section",
+          "value": "Appendix D"
+        }
+      ],
+      "status": "NOT_ASSESSED",
+      "applicability": "UNDETERMINED",
+      "responsibility": "UNDETERMINED",
+      "responsibility_guidance": "For Azure SQL Database and Managed Instance, request service-specific provider assurance for managed endpoint behavior and customer evidence for exposed settings. For SQL Server on a VM, customer DB/OS owners must establish their configuration and cryptographic evidence. Confirm exact service/version support.",
+      "evidence": [],
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "remediation_proposal": null
+    }
+  ]
+}

@@ -7,7 +7,21 @@ from pathlib import Path
 
 from .compliance import MAX_BYTES, stig_register
 
-CATALOGS = ("nist-800-53", "sql-2022-stigs", "all")
+CATALOGS = ("nist-800-52", "nist-800-53", "sql-2022-stigs", "all")
+
+
+def nist_tls_register(root: Path) -> dict:
+    """SQLIQ-authored section review aid, not an official NIST control catalog."""
+    raw = (root / "compliance/nist-800-52-review.json").read_bytes()
+    if len(raw) > MAX_BYTES:
+        raise ValueError("Catalog too large")
+    profile = json.loads(raw)
+    controls = profile["controls"]
+    if not controls or len({c["rule_id"] for c in controls}) != len(controls):
+        raise ValueError("Invalid catalog IDs")
+    return {**profile, "mode": "offline_tls_review_profile",
+            "benchmark_sha256": hashlib.sha256(raw).hexdigest(),
+            "total_rules": len(controls), "assessed_rules": 0, "compliance_claim": False}
 
 
 def _walk(node: dict, key: str):
@@ -80,6 +94,8 @@ def nist_register(root: Path) -> dict:
 def bundled_register(root: Path, name: str) -> dict:
     if name not in CATALOGS:
         raise ValueError("Unknown catalog")
+    if name == "nist-800-52":
+        return nist_tls_register(root)
     registers = []
     if name in {"nist-800-53", "all"}:
         registers.append(nist_register(root))

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 DOMAIN_HOOKS = {
     "azure": {
+        "nist-tls": ("tls-endpoint-scope", "provider-tls-assurance", "protocol-configuration"),
         "assessment": ("private-network", "identity-boundary", "audit-and-recovery"),
         "azure-cli": ("command-scope", "identity-boundary", "no-live-cli"),
         "security": ("private-network", "identity-boundary", "encryption-and-audit"),
@@ -13,6 +14,7 @@ DOMAIN_HOOKS = {
         "compliance": ("shared-responsibility", "provider-evidence", "customer-configuration"),
     },
     "sql": {
+        "nist-tls": ("tds-client-inventory", "certificate-validation", "negotiated-crypto-evidence"),
         "assessment": ("metadata-only", "least-privilege", "bounded-evidence"),
         "azure-cli": ("metadata-only", "sql-permissions", "bounded-evidence"),
         "security": ("sql-permissions", "data-classification", "sql-injection-review"),
@@ -38,6 +40,9 @@ def before_domain(domain: str, workflow: str, skill: str) -> dict:
         raise ValueError("Specialist skill does not match the workflow")
     checks = (COMPLIANCE_HOOKS if domain == "compliance"
               else DOMAIN_HOOKS[domain][workflow])
+    if domain == "compliance" and workflow == "nist-tls":
+        checks += ("nist-800-52-clause-applicability", "server-and-client-evidence",
+                   "no-tls-floor-only-pass")
     return {"phase": "before-domain", "domain": domain, "workflow": workflow,
             "selected_skill": skill, "mode": "offline", "live_tools": [],
             "required_reviews": list(checks)}

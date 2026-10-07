@@ -50,10 +50,18 @@ def audit_pdf(register: dict, evidence: Path | None = None,
 
     counts = Counter(findings.get(c['rule_id'], {}).get('status', 'NOT_ASSESSED')
                      for c in register['controls'])
+    tls_scope = ('TLS section-level review results appear below. Review all applicable source '
+                 'clauses before accepting an item result; these SQLIQ items are not an '
+                 'exhaustive clause register or overall conformance determination.'
+                 if register.get('mode') == 'offline_tls_review_profile' else
+                 'TLS review remains NOT_ASSESSED: protocols, negotiation, cipher suites, '
+                 'certificates, validation and cryptographic modules require separate evidence.')
     story = [p('SQL control audit evidence report', 'Title'), p('Target: ' + scope),
              p(f"Benchmark: {register['benchmark_id']} / {register['version']}"),
              p('SHA-256: ' + register['benchmark_sha256']),
-             p(f"Coverage: every one of {register['total_rules']} benchmark rules included."),
+             p(f"Coverage: all {register['total_rules']} selected register entries included."),
+             p('Assessment coverage: ' + register.get('scope', 'Verify source scope')),
+             p('Provenance: ' + register.get('provenance', 'Verify source origin')),
              p(' | '.join(f'{s}: {counts[s]}' for s in
                          ('PASS', 'FAIL', 'NOT_APPLICABLE', 'NOT_ASSESSED'))),
              p('Offline evidence review. No database connection or automated checks performed. '
@@ -63,8 +71,7 @@ def audit_pdf(register: dict, evidence: Path | None = None,
              p('Framework boundaries', 'Heading2'),
              p('DISA publishes SQL STIG benchmarks. NIST SP 800-52 Rev. 2 addresses TLS; '
                'this report does not claim full NIST or financial framework assessment. '
-               'TLS review remains NOT_ASSESSED: protocols, negotiation, cipher suites, '
-               'certificates, validation and cryptographic modules require separate evidence.'),
+               + tls_scope),
              p('NIST source: https://csrc.nist.gov/pubs/sp/800/52/r2/final'),
              p('Azure inheritance remains UNDETERMINED per rule. Provider responsibility '
                'does not establish a pass. Obtain service-specific assurance and customer '

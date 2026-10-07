@@ -31,6 +31,19 @@ def _run_specialist(domain: str, selection: dict) -> dict:
                            "principal_permissions": "DBA verification required"})
         else:
             detail.update(compliance_review())
+        if selection['workflow'] == 'nist-tls':
+            detail.update(assessment_catalog=selection['assessment_catalog'],
+                          assessment_guide=selection['assessment_guide'],
+                          assessment_profile=selection['assessment_profile'])
+            if domain == 'azure':
+                detail['required'] = ['exact SQL service and endpoint scope',
+                                      'provider TLS assurance and customer configuration',
+                                      'protocol support and negotiation; TLS floor is insufficient']
+            elif domain == 'compliance':
+                detail['required'] = ['NIST SP 800-52 Rev. 2 source-clause applicability',
+                                      'server sections 3.1-3.8 and client sections 4.1-4.8',
+                                      'appendices C and D applicability',
+                                      'evidence, exceptions, remediation, owner and independent review']
         return StateDelta(working_memory={"review": detail}), END
 
     graph = Graph(f"{domain}-specialist", "1.2.0",

@@ -17,6 +17,7 @@ cannot restrict an otherwise privileged agent. Install dependencies with `uv syn
 
 | Task | Local skill | AEF guide |
 |---|---|---|
+| NIST SP 800-52 server/client TLS | sql-compliance-review | nist-tls |
 | Azure CLI assessment planning | azure-cli-assessment | azure-cli |
 | Security posture | azure-security-assessment | security |
 | Bounded catalog metadata | azure-sql-readonly | assessment |
@@ -79,6 +80,15 @@ Run tests, lint and source verification after changes. Rehearse the cases in
 model/version, selected skills, output and pass/fail evidence. Automated repository
 checks do not establish agent quality rankings or enterprise certification. Refresh
 Microsoft sources through reviewed commits, never unattended self-learning promotion.
+
+## Primary SQL TLS review
+
+Use `uv run azure-sql-agent guide --workflow nist-tls` for NIST SP 800-52.
+Azure reviews endpoint scope, provider assurance and configuration; SQL reviews
+client inventory, certificate validation and negotiated crypto evidence; compliance
+reviews source-clause applicability and evidence completeness. The guide identifies
+`--catalog nist-800-52` for HTML/PDF reporting. See [TLS assessment](nist-tls-review.md).
+Hooks validate routing; they do not perform live TLS tests or prove findings.
 
 ## Compliance review
 

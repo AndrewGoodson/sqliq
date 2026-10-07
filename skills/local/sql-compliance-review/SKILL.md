@@ -1,12 +1,35 @@
 ---
 name: sql-compliance-review
-description: Review SQL STIG control coverage, NIST TLS evidence and financial control applicability for Azure SQL using supplied offline evidence. Use for compliance reviews, audit preparation and remediation planning.
+description: Focus SQL database reviews on NIST SP 800-52 Rev. 2 TLS server and client evidence. Review SQL STIG coverage and financial applicability separately using supplied offline evidence. Use for TLS compliance, audit preparation and remediation planning.
 ---
 
 # SQL compliance review
 
 Read [review contract](../references/review-contract.md) and
 [compliance coverage](../../../docs/compliance.md). Follow AGENTS.md and SECURITY.md.
+
+## Primary SQL TLS workflow
+
+For SQL database transport security, start with
+`uv run azure-sql-agent guide --workflow nist-tls` and
+[NIST TLS assessment](../../../docs/nist-tls-review.md). Use
+`compliance-report --catalog nist-800-52 --output FILE` for the HTML review,
+adding `--format pdf` for a PDF. Keep customer reports outside Git.
+The source-locked SQLIQ profile has 18 section-level review items; it is not an
+official NIST control catalog or an exhaustive clause checklist. Map every applicable
+source clause within each item to evidence before accepting a PASS. Missing clauses
+or provider assurance remain gaps, even if a connection uses TLS 1.2 or TLS 1.3.
+
+Cover actual SQL/TDS endpoints and every distinct application, ETL, reporting and
+administration client stack. Ask for dated, approved operator evidence; do not run
+probes, live CLI or SQL outside the signed broker. Separate endpoint configuration,
+protocol negotiation, certificate validation and cryptographic module assurance.
+Scope Azure SQL Database, Managed Instance and SQL Server VM responsibilities
+individually. Database login authentication is not TLS client-certificate evidence;
+TDE at-rest encryption is not TLS transport evidence. Keep STIG and financial
+framework conclusions separate. No AI-generated finding constitutes proof.
+
+## Broader compliance review
 
 1. Establish Azure SQL Database, Managed Instance or SQL Server on VM, engine version,
    environment, financial data scope, benchmark release and responsible owners.

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 WORKFLOWS = {
+    "nist-tls": ("azure-security-assessment", "sql-compliance-review"),
     "compliance": ("azure-security-assessment", "azure-sql-readonly"),
     "assessment": ("azure-security-assessment", "azure-sql-readonly"),
     "azure-cli": ("azure-cli-assessment", "azure-sql-readonly"),
@@ -15,7 +16,7 @@ WORKFLOWS = {
 
 def select_workflow(name: str) -> dict:
     azure, sql = WORKFLOWS[name]  # Unknown workflows fail closed.
-    return {
+    selected = {
         "workflow": name,
         "orchestrator_skill": "skills/local/orchestration-security/SKILL.md",
         "azure_skill": f"skills/local/{azure}/SKILL.md",
@@ -28,3 +29,8 @@ def select_workflow(name: str) -> dict:
                             "rollback limits", "owner and approval requirements"],
         "execution": "offline guidance only; no Azure CLI or arbitrary SQL execution",
     }
+    if name == "nist-tls":
+        selected.update(assessment_catalog="nist-800-52",
+                        assessment_guide="docs/nist-tls-review.md",
+                        assessment_profile="compliance/nist-800-52-review.json")
+    return selected

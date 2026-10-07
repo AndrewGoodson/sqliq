@@ -168,3 +168,12 @@ No evidence means all rules remain NOT_ASSESSED. Source instructions never execu
 This renders operator-reported evidence; it does not automate every benchmark check
 or establish full NIST, finance, or Azure inherited-control compliance. Assigning
 Azure responsibility and obtaining supporting provider assurance remain reviewer tasks.
+
+## Primary SQL transport-security assessment
+
+Run `uv run azure-sql-agent guide --workflow nist-tls`, then
+`uv run azure-sql-agent compliance-report --catalog nist-800-52 --output tls-review.html`.
+Add `--format pdf` for a branded PDF. The source-locked SQLIQ profile has 18
+section-level review items; it is not an official NIST control catalog or exhaustive
+clause register. See [NIST SP 800-52 SQL TLS assessment](nist-tls-review.md) for
+server/client evidence, Azure responsibility, reviewed findings and coverage limits.

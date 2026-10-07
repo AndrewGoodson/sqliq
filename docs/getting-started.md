@@ -83,8 +83,9 @@ when branding is not needed; SQLIQ branding is included. No evidence means every
 entry is NOT_ASSESSED. These commands are report generation, not a database scan.
 Use `--evidence /absolute/private/assessment/findings.json` with reviewed findings
 matching the catalog hash and rule IDs; see [report instructions](compliance.md).
-TLS checklist findings are a separate assessment artifact; the bundled `all` catalog
-contains SP 800-53 and SQL STIG entries, not a complete SP 800-52 clause register.
+Use `--catalog nist-800-52` for a separate TLS report and `guide --workflow nist-tls`
+for TLS routing. The bundled `all` catalog contains SP 800-53 and SQL STIG entries;
+the dedicated TLS profile is a section-level aid, not an exhaustive clause register.
 
 Require evidence references/timestamps, PASS/FAIL/NA/NOT_ASSESSED, rationale,
 remediation, validation, owner and approval needs. Missing provider evidence or
@@ -115,3 +116,11 @@ reviews provenance, proposed changes and regression evidence before a release.
 After changes, run `uv run pytest`, `uv run ruff check src tests scripts` and
 `uv run azure-sql-agent verify`. Changes to pinned sources require a separate
 provenance review before lock regeneration. Do not unlock sources to bypass a failure.
+
+## Start with SQL TLS
+
+For NIST SP 800-52, use `uv run azure-sql-agent guide --workflow nist-tls`
+and `uv run azure-sql-agent compliance-report --catalog nist-800-52 --output tls-review.html`.
+This dedicated SQLIQ profile covers 18 server/client section-level review items.
+It is separate from `--catalog all`, and is not an exhaustive NIST clause register.
+Use the [TLS assessment guide](nist-tls-review.md) for private findings and PDF branding.

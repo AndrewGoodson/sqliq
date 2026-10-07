@@ -58,3 +58,15 @@ Direct Microsoft Learn review is summarized in the
 canonical URLs. These live documents are not vendored or represented as immutable;
 recheck current applicability when using them. Local original summaries and workflow
 contracts are included in source integrity verification.
+
+## SQLIQ NIST SP 800-52 profile (2026-10-06)
+
+`compliance/nist-800-52-review.json` is original SQLIQ assessment guidance,
+source-locked alongside local skills. Its 18 IDs are not official NIST control IDs.
+It maps server sections 3.1-3.8, client sections 4.1-4.8 and appendices C/D of
+[NIST SP 800-52 Rev. 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf)
+to SQL evidence-review tasks. The official publication governs clause interpretation.
+Microsoft connectivity and shared-responsibility URLs accompany each item. Live
+publisher documents are references, not vendored immutable sources. Review the
+[NIST publication status](https://csrc.nist.gov/pubs/sp/800/52/r2/final) at assessment
+time. The profile hash binds submitted findings to the exact reviewed profile bytes.

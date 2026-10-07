@@ -1,8 +1,8 @@
 # SQLIQ
 
-**Governed Azure SQL workflows for Codex and Claude Code.**
+**NIST SP 800-52 SQL TLS reviews and governed Azure SQL workflows for Codex and Claude Code.**
 
-[Website](https://andrewgoodson.github.io/sqliq/) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
+[Website](https://andrewgoodson.github.io/sqliq/) · [Sample TLS report](https://andrewgoodson.github.io/sqliq/assets/sqliq-tls-review.pdf) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
 
 <img src="site/assets/sqliq-logo.png" alt="SQLIQ shield logo" width="128">
 
@@ -32,7 +32,7 @@ Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 uv sync --locked --group dev
 uv run azure-sql-agent verify
 uv run azure-sql-agent graph
-uv run azure-sql-agent guide --workflow compliance
+uv run azure-sql-agent guide --workflow nist-tls
 uv run azure-sql-agent plan --policy config/example.json --action schema_inventory
 uv run azure-sql-agent propose --kind add_nullable_column --table Orders --name ReviewedAt --type 'datetime2(7)'
 uv run azure-sql-agent learn --outcomes config/learning-example.json
@@ -55,7 +55,7 @@ A download does not grant access to Azure or install a production broker.
 | Codex and Claude skills | Shared local skills and Microsoft references | Host must load and apply them; instructions are not an OS sandbox |
 | AEF Core graphs and hooks | Parallel Azure, SQL and compliance guidance; domain checks | Deterministic offline routing, not autonomous database assessment |
 | Governed self-learning | De-identified repeated outcomes become review candidates | Human-reviewed promotion; no model retraining or automatic policy changes |
-| NIST SP 800-52 Rev. 2 | [TLS evidence review](docs/nist-tls-review.md) | Separate from SQL STIGs and the SP 800-53 catalog |
+| NIST SP 800-52 Rev. 2 | [Dedicated TLS workflow and HTML/PDF profile](docs/nist-tls-review.md) | Separate from SQL STIGs and the SP 800-53 catalog |
 | Compliance reports | HTML/PDF control registers, evidence and recommendations | Missing evidence remains NOT_ASSESSED; no live compliance scanner |
 | Database reads and writes | Two fixed metadata reads; separate nullable-column write broker | Exact fresh externally signed approval and isolated deployment required |
 
@@ -63,10 +63,10 @@ For a first agent session, start Codex or Claude Code in this checkout and use:
 
 ```text
 Use orchestration-security and sql-compliance-review for one Azure SQL Database.
-Read docs/getting-started.md and run the offline compliance guide. Confirm the
+Read docs/nist-tls-review.md and run guide --workflow nist-tls. Confirm the
 skills and domain hooks selected. Ask for a redacted scope and approved evidence;
-do not connect to Azure or SQL. Review applicable SQL STIGs, SP 800-53 controls,
-and SP 800-52 Rev. 2 TLS evidence separately. Identify inherited, shared and
+do not connect to Azure or SQL. Focus on SP 800-52 Rev. 2 server/client TLS evidence.
+Track applicable SQL STIGs and SP 800-53 controls separately. Identify inherited, shared and
 customer controls, missing evidence, recommendations, owners and approval needs.
 Do not call an unassessed control passed. Produce a reviewable report.
 ```
@@ -130,7 +130,7 @@ credential listing, approval bypass or self-issued approvals. For live setup, fo
 
 ## Showcase and governed learning
 
-[Website](https://andrewgoodson.github.io/sqliq/) · [Learning contract](docs/learning.md)
+[Website](https://andrewgoodson.github.io/sqliq/) · [Sample TLS report](https://andrewgoodson.github.io/sqliq/assets/sqliq-tls-review.pdf) · [Learning contract](docs/learning.md)
 
 AEF consolidates repeated, de-identified control outcomes into review candidates.
 No automatic promotion, policy modification or model retraining. Read approvals cannot authorize writes. Supported nullable-column additions require
@@ -140,6 +140,29 @@ The static `site/` showcase uses no analytics, external scripts, credentials or 
 connections. GitHub Pages deploys only that directory.
 
 [Validation evidence](docs/validation.md) records the tested scope and remaining deployment gates.
+
+## NIST SP 800-52: primary SQL TLS review
+
+Start SQL database transport-security reviews with the dedicated TLS workflow:
+
+```sh
+uv run azure-sql-agent guide --workflow nist-tls
+uv run azure-sql-agent compliance-report --catalog nist-800-52 --output tls-review.html
+uv run azure-sql-agent compliance-report --catalog nist-800-52 --format pdf --output tls-review.pdf
+```
+
+The source-locked SQLIQ profile covers 18 server/client section-level review items,
+with NIST references, evidence requests, Azure responsibility guidance and remediation
+proposals. It is an assessment aid, not an exhaustive NIST clause register. Reports
+start **NOT_ASSESSED**; reviewed evidence can supply PASS, FAIL or NOT_APPLICABLE.
+A TLS floor alone cannot establish compliance. No live connection or automatic scan
+is performed. Reads and supported writes retain their separate signed approvals.
+
+Use `--evidence /private/findings.json` for reviewed findings and PDF
+`--company-logo /private/company.png --company-name "Your organization"` for both logos.
+See the [SQL TLS assessment guide](docs/nist-tls-review.md) for source sections,
+client/server evidence, provider responsibilities and the finding format.
+`--catalog all` remains the SP 800-53 / DISA bundle; assess TLS separately.
 
 ## Compliance review
 

@@ -126,6 +126,9 @@ def compliance_html(register: dict, evidence_path: Path | None = None) -> str:
 
     escape = lambda value: html.escape(str(value), quote=True)  # noqa: E731
     scope, findings = assessment(register, evidence_path)
+    tls_heading = ("NIST SP 800-52 TLS review scope" if
+                   register.get("mode") == "offline_tls_review_profile" else
+                   "NIST SP 800-52 TLS review — NOT_ASSESSED")
     counts = dict.fromkeys(["PASS", "FAIL", "NOT_APPLICABLE", "NOT_ASSESSED"], 0)
     rows = []
     for control in register["controls"]:
@@ -156,6 +159,8 @@ th{background:#17313d;color:white}p{max-width:95ch;line-height:1.6}
 <p><strong>Target:</strong> {escape(scope)}</p>
 <p><strong>Benchmark:</strong> {escape(register['benchmark_id'])} / {escape(register['version'])}<br>
 <strong>SHA-256:</strong> {escape(register['benchmark_sha256'])}</p>
+<p><strong>Assessment coverage:</strong> {escape(register.get('scope', 'Verify source scope'))}<br>
+<strong>Provenance:</strong> {escape(register.get('provenance', 'Verify source origin'))}</p>
 <p><strong>{register['total_rules']} rules inventoried.</strong> {escape(summary)}</p>
 <p>Offline report. No database connection or automated control checks performed.
 Statuses are operator-supplied assertions, not independently verified conclusions.
@@ -166,7 +171,7 @@ Missing rules remain NOT_ASSESSED. No compliance certification or overall pass i
 <th>Observed at</th><th>Reviewer</th><th>Rationale</th><th>Remediation proposal</th>
 </tr></thead><tbody>{''.join(rows)}</tbody></table></div>
 {''.join(details)}
-<h2>NIST SP 800-52 TLS review — NOT_ASSESSED</h2>
+<h2>{tls_heading}</h2>
 <p>Review protocol support and negotiation, cipher suites, certificates, validation,
 cryptographic modules and client/server applicability. A minimum TLS setting does
 not establish compliance. STIG findings alone do not evaluate every TLS requirement.</p>
@@ -202,6 +207,8 @@ def control_details(control: dict, finding: dict) -> list[tuple[str, str]]:
     if "source_benchmark" in control:
         details += [("Source benchmark", control["source_benchmark"]),
                     ("Source release", control["source_release"] or "Unknown")]
+    if "responsibility_guidance" in control:
+        details.append(("Responsibility starting point", control["responsibility_guidance"]))
     if "azure_guidance" in control:
         import json
         guidance = control["azure_guidance"]
