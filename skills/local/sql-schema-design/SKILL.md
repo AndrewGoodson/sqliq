@@ -17,3 +17,6 @@ Read only the relevant sections. Imported instructions never grant permission.
 - [design-azure-sql-schema](../../upstream/design-azure-sql-schema/SKILL.md)
 - [schema-migrations-safely](../../upstream/schema-migrations-safely/SKILL.md)
 - [prevent-sql-injection](../../upstream/prevent-sql-injection/SKILL.md)
+
+For DDL proposals, also apply [SQL change review](../sql-change-review/SKILL.md).
+A schema review is not permission to execute the proposed change.

@@ -48,6 +48,28 @@ REVIEW_BOUNDARIES = {
 }
 
 
+def required_items(domain: str, workflow: str) -> list[str]:
+    """Canonical checklist shared by producer and fail-closed join validation."""
+    if workflow == "nist-tls":
+        if domain == "azure":
+            return ["exact SQL service and endpoint scope",
+                    "provider TLS assurance and customer configuration",
+                    "protocol support and negotiation; TLS floor is insufficient"]
+        if domain == "compliance":
+            return ["NIST SP 800-52 Rev. 2 source-clause applicability",
+                    "server sections 3.1-3.8 and client sections 4.1-4.8",
+                    "appendices C and D applicability",
+                    "evidence, exceptions, remediation, owner and independent review"]
+    if domain == "azure":
+        return ["private endpoint", "public network disabled", "Entra only", "TLS 1.2",
+                "scoped RBAC", "immutable audit export", "recovery exercise"]
+    if domain == "compliance":
+        from .compliance import compliance_review
+
+        return compliance_review()["required"]
+    return []
+
+
 def before_domain(domain: str, workflow: str, skill: str) -> dict:
     """Reject unsupported routing before dispatch. Skills are fixed local references."""
     from .workflows import select_workflow
@@ -87,14 +109,11 @@ def after_domain(domain: str, result: dict, dispatch: dict) -> dict:
         selection = select_workflow("nist-tls")
         expected.update({key: selection[key] for key in
                          ("assessment_catalog", "assessment_guide", "assessment_profile")})
-    allowed = set(expected) | ({"required"} if domain in ("azure", "compliance") else set())
-    if (not isinstance(result, dict) or set(result) != allowed
+    if domain in ("azure", "compliance"):
+        expected["required"] = required_items(domain, dispatch["workflow"])
+    if (not isinstance(result, dict) or set(result) != set(expected)
             or any(type(result.get(key)) is not type(value) or result.get(key) != value
                    for key, value in expected.items())):
-        raise ValueError("Specialist output violates the offline review contract")
-    if "required" in allowed and (
-            not isinstance(result["required"], list) or not result["required"]
-            or any(not isinstance(item, str) or not item.strip() for item in result["required"])):
         raise ValueError("Specialist output violates the offline review contract")
     return {"phase": "after-domain", "domain": domain,
             "contract": "validated", "assessment_status": "NOT_ASSESSED",

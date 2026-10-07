@@ -27,6 +27,11 @@ setup, agent review, STIG evidence, approval and post-change checks. The standal
 on an internal static site; it needs no build, scripts or external assets. It does
 not connect to a database or grant approval. External documentation links need internet access.
 
+Business owners can start with the guide’s plain-language review request and decision
+checklist. IT performs setup and evidence collection. See the
+[domain skill coverage review](docs/skill-coverage.md) for routing, source references
+and the limits of each specialist.
+
 ## Quick start (offline)
 
 Clone this public repository:

@@ -8,7 +8,9 @@ description: Draft and review Azure SQL schema change proposals without executin
 Owner: SQL agent. Generate proposals only: target, exact DDL, preconditions,
 compatibility, locking/cost, backfill, backup/restore evidence and rollback risks.
 Current templates: add a nullable column, create a nonclustered index.
-Schema and server changes are not executable through this broker.
+The read broker cannot execute schema or server changes. The separate write broker
+supports only exact approved nullable-column additions. Index and server proposals
+require a separately governed operator release.
 
 Consult upstream schema-migrations-safely. Migration execution belongs to a separate
 DBA release identity and approval pipeline. Never reuse a read approval for a write.

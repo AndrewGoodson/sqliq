@@ -200,3 +200,23 @@ def test_migration_join_rejects_unsupported_claims(domain, field, value, monkeyp
     monkeypatch.setattr(orchestration, "after_domain", tampered_output)
     with pytest.raises(Exception, match="offline review contract"):
         guide("migration")
+
+
+@pytest.mark.parametrize("workflow", WORKFLOWS)
+@pytest.mark.parametrize("domain", ["azure", "compliance"])
+@pytest.mark.parametrize("mutation", ["dropped", "substituted", "duplicate"])
+def test_hook_rejects_changed_required_checklist(workflow, domain, mutation):
+    from copy import deepcopy
+
+    from azure_sql_agents.domain_hooks import after_domain
+
+    report = guide(workflow)
+    result = deepcopy(report[f"{domain}_review"])
+    if mutation == "dropped":
+        result["required"].pop()
+    elif mutation == "substituted":
+        result["required"][0] = "skip control review"
+    else:
+        result["required"].append(result["required"][0])
+    with pytest.raises(ValueError, match="offline review contract"):
+        after_domain(domain, result, report["domain_hooks"][domain][0])

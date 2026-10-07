@@ -8,7 +8,7 @@ from aef.kernel import END, Edge, Graph, GraphExecutor, Node, Services
 from aef.state import AEFState, StateDelta
 
 from .compliance import compliance_review
-from .domain_hooks import after_domain, before_domain
+from .domain_hooks import after_domain, before_domain, required_items
 from .models import Policy, make_plan
 from .workflows import select_workflow
 
@@ -21,10 +21,7 @@ def _run_specialist(domain: str, selection: dict) -> dict:
         detail = {"selected_skill": skill, "status": "NOT_ASSESSED", "live_tools": [],
                   "required_reviews": dispatch["required_reviews"]}
         if domain == "azure":
-            detail.update({"required": ["private endpoint", "public network disabled",
-                                       "Entra only", "TLS 1.2", "scoped RBAC",
-                                       "immutable audit export", "recovery exercise"],
-                           "deployment_evidence": "NOT VERIFIED"})
+            detail.update({"deployment_evidence": "NOT VERIFIED"})
         elif domain == "sql":
             detail.update({"write_execution": "separate exact signed approval; nullable-column additions only",
                            "read_scope": "bounded system catalog metadata",
@@ -35,15 +32,8 @@ def _run_specialist(domain: str, selection: dict) -> dict:
             detail.update(assessment_catalog=selection['assessment_catalog'],
                           assessment_guide=selection['assessment_guide'],
                           assessment_profile=selection['assessment_profile'])
-            if domain == 'azure':
-                detail['required'] = ['exact SQL service and endpoint scope',
-                                      'provider TLS assurance and customer configuration',
-                                      'protocol support and negotiation; TLS floor is insufficient']
-            elif domain == 'compliance':
-                detail['required'] = ['NIST SP 800-52 Rev. 2 source-clause applicability',
-                                      'server sections 3.1-3.8 and client sections 4.1-4.8',
-                                      'appendices C and D applicability',
-                                      'evidence, exceptions, remediation, owner and independent review']
+        if domain in ("azure", "compliance"):
+            detail["required"] = required_items(domain, selection["workflow"])
         return StateDelta(working_memory={"review": detail}), END
 
     graph = Graph(f"{domain}-specialist", "1.2.0",
