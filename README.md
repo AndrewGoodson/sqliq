@@ -1,6 +1,6 @@
-# LedgerGuard SQL
+# SchemaIQ
 
-<img src="site/assets/ledgerguard-logo.png" alt="LedgerGuard SQL shield logo" width="128">
+<img src="site/assets/schemaiq-logo.png" alt="SchemaIQ shield logo" width="128">
 
 AEF Core orchestration with dedicated Azure and SQL specialists, pinned Microsoft
 skills, local security skills, and an independently approved metadata-read broker.
@@ -64,7 +64,7 @@ credential listing, approval bypass or self-issued approvals. For live setup, fo
 
 ## Showcase and governed learning
 
-[Website](https://andrewgoodson.github.io/ledgerguard-sql/) · [Learning contract](docs/learning.md)
+[Website](https://andrewgoodson.github.io/schemaiq/) · [Learning contract](docs/learning.md)
 
 AEF consolidates repeated, de-identified control outcomes into review candidates.
 No automatic promotion, policy modification or model retraining. Write execution

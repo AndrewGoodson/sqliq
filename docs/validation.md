@@ -14,9 +14,9 @@ Local validation, 2026-10-06:
   working graph-selection interaction, zero console errors or warnings.
 - A fresh clone from the public GitHub repository installs with the locked
   dependencies, verifies source integrity and passes all 62 tests.
-- [GitHub CI](https://github.com/AndrewGoodson/ledgerguard-sql/actions/runs/37557863804)
+- [GitHub CI](https://github.com/AndrewGoodson/schemaiq/actions/runs/37557863804)
   passed on Linux for initial implementation commit `1997e7c`.
-- [Pages deployment](https://github.com/AndrewGoodson/ledgerguard-sql/actions/runs/37557863787)
+- [Pages deployment](https://github.com/AndrewGoodson/schemaiq/actions/runs/37557863787)
   succeeded. Public HTML, CSS, JavaScript and logo return HTTP 200 and match local
   source hashes. The hosted page loads in a browser without console errors.
 
