@@ -12,8 +12,13 @@ Local validation, 2026-10-06:
   example credential URL. No actual credential identified in the publication set.
 - Browser checked at 1440px desktop and 390px mobile: no horizontal overflow,
   working graph-selection interaction, zero console errors or warnings.
-- Earlier clean-copy offline installation and the then-current 56-test suite passed;
-  the six learning tests were added afterward and pass in the working checkout.
+- A fresh clone from the public GitHub repository installs with the locked
+  dependencies, verifies source integrity and passes all 62 tests.
+- [GitHub CI](https://github.com/AndrewGoodson/ledgerguard-sql/actions/runs/37557863804)
+  passed on Linux for initial implementation commit `1997e7c`.
+- [Pages deployment](https://github.com/AndrewGoodson/ledgerguard-sql/actions/runs/37557863787)
+  succeeded. Public HTML, CSS, JavaScript and logo return HTTP 200 and match local
+  source hashes. The hosted page loads in a browser without console errors.
 
 These checks do not establish compliance certification or production readiness.
 No live Azure tenant, private endpoint, database, managed identity, ODBC driver,
