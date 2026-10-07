@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A practical SQLIQ starting guide: prepare a SQL STIG review and an approved database change or migration before touching production.">
+<title>SQLIQ — Before you create or change a database</title>
+<style>
+:root{color-scheme:light;--ink:#1c303b;--muted:#52616c;--line:#cbd2d5;--paper:#f8f7f3;--accent:#a55827}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.65 system-ui,sans-serif}main,header,footer{max-width:1040px;margin:auto;padding:28px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);gap:20px}.brand{font-size:28px;font-weight:750;letter-spacing:-1px}.brand span{color:var(--accent)}a{color:inherit;text-underline-offset:4px}a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:5px}h1,h2,h3{line-height:1.2}h1{font:clamp(36px,6vw,62px)/1.12 Georgia,serif;max-width:840px;margin:20px 0}h2{font:32px/1.2 Georgia,serif}h3{font-size:19px}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--accent)}.lead{font-size:20px;max-width:760px;color:var(--muted)}.note{border-left:3px solid var(--accent);padding:12px 20px;background:#efece5}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:32px 0}.steps a{padding:14px;border:1px solid var(--line);text-decoration:none;font-size:15px}.steps a:hover{background:#e9edef}section{padding:25px 0;border-top:1px solid var(--line);scroll-margin-top:20px}pre{padding:20px;background:#e9edef;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.7}code{font-family:ui-monospace,monospace}li{margin:9px 0}p,li,td{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;vertical-align:top;padding:14px 10px;border-bottom:1px solid var(--line)}th{background:#e9edef}details{border:1px solid var(--line);padding:18px;margin:20px 0}summary{cursor:pointer;font-weight:650}footer{border-top:1px solid var(--line);color:var(--muted);font-size:14px}.small{font-size:14px;color:var(--muted)}@media(max-width:640px){main,header,footer{padding:20px}.steps{grid-template-columns:1fr}th,td{padding:10px 5px;font-size:13px}header{align-items:flex-start;font-size:14px}}@media print{body{background:white;font-size:11pt}header,main,footer{max-width:none;padding:12px}.steps{display:none}pre{font-size:9pt}h2,h3{break-after:avoid}tr,pre,.note{break-inside:avoid}a{text-decoration:underline}details{display:none}}
+</style></head><body>
+<header><div class="brand">SQL<span>IQ</span></div><a href="https://github.com/AndrewGoodson/sqliq">Repository &amp; source</a></header>
+<main>
+<p class="eyebrow">START HERE / DATABASE CHANGE READINESS</p>
+<h1>Before you create or change a database.</h1>
+<p class="lead">Use SQLIQ to organize the security review, identify evidence gaps and prepare a change for approval. Start with the controls and owners, then review the proposed database work.</p>
+<p class="note">This page is a guide, not an assessment or approval. Opening it runs no code and connects to no database. It is one self-contained HTML file: save it, open it locally, or serve it on an internal static site. No external assets, scripts or telemetry are loaded.</p>
+<nav class="steps" aria-label="Guide steps"><a href="#setup">01 · Set up the repository</a><a href="#scope">02 · Define the change</a><a href="#agents">03 · Start the agent review</a><a href="#controls">04 · Review controls</a><a href="#approval">05 · Prepare approval</a><a href="#validate">06 · Verify the outcome</a></nav>
+<section id="setup"><p class="eyebrow">01 / LOCAL SETUP</p><h2>Start in a reviewed checkout.</h2>
+<p>Install Git, Python 3.11+ and <a href="https://docs.astral.sh/uv/">uv</a>. Clone with working symlink support so Codex and Claude can discover the shared skills. Installation downloads dependencies; the guide and report commands below do not access Azure or SQL.</p>
+<pre><code>git clone https://github.com/AndrewGoodson/sqliq.git
+cd sqliq
+uv sync --locked --group dev
+uv run azure-sql-agent verify
+uv run azure-sql-agent graph</code></pre>
+<p>Read <a href="https://github.com/AndrewGoodson/sqliq/blob/main/AGENTS.md">AGENTS.md</a>, <a href="https://github.com/AndrewGoodson/sqliq/blob/main/SECURITY.md">SECURITY.md</a> and <a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/security.md">security boundaries</a>. Keep the agent host separate from live credentials, broker privileges and reviewer private keys. Stop if source verification fails; review the cause rather than changing the source lock.</p></section>
+<section id="scope"><p class="eyebrow">02 / PRIVATE REVIEW RECORD</p><h2>Name the database, change and owners.</h2>
+<p>Keep a private working folder outside this public checkout. Record a database alias, Azure service, engine/version, environment, purpose, data classification and the technical, security and financial control owners. Do not put credentials, tenant identifiers, customer rows or private reports in Git.</p>
+<table><thead><tr><th scope="col">Your intent</th><th scope="col">Review before execution</th></tr></thead><tbody>
+<tr><td>Create a database</td><td>Target service and region, identity and least privilege, network access, encryption/TLS, auditing, backup/restore, retention and applicable control requirements. Provisioning uses your approved operator process.</td></tr>
+<tr><td>Change an existing database</td><td>Current evidence, exact schema proposal, dependencies, financial integrity, performance impact, validation and rollback. Select the schema workflow.</td></tr>
+<tr><td>Migrate a database</td><td>Source and target compatibility, separate control registers, rehearsal, accounting reconciliation, recovery objectives, cutover and rollback authority. Select the migration workflow.</td></tr></tbody></table>
+<p>Document what evidence may enter your model environment. If company policy prohibits AI processing, use local deterministic guides and reports with an authorized human reviewer.</p></section>
+<section id="agents"><p class="eyebrow">03 / CODEX OR CLAUDE</p><h2>Load the skills before reviewing evidence.</h2>
+<p>Start the host at the repository root. Codex discovers <code>.agents/skills</code>; Claude discovers <code>.claude/skills</code>. Both resolve to <code>skills/local</code>. Require the host to name the skills it loaded.</p>
+<pre><code>uv run azure-sql-agent guide --workflow compliance
+uv run azure-sql-agent guide --workflow security
+# Choose the relevant change workflow:
+uv run azure-sql-agent guide --workflow schema
+uv run azure-sql-agent guide --workflow migration</code></pre>
+<h3>First-session prompt</h3><pre><code>Use orchestration-security and sql-compliance-review.
+For schema changes, also apply sql-schema-design and sql-change-review.
+For migration, also apply sql-migration-planning.
+Read the repository rules and shared review contract. Run the relevant
+AEF guides and name the selected skills and domain hooks.
+Review only redacted evidence already approved for this model environment.
+Prepare the source/target scope, control register, evidence gaps,
+proposed change, validation, rollback and owner decisions.
+Do not connect to Azure or SQL or execute changes.
+Keep missing evidence NOT_ASSESSED; do not infer approval.</code></pre>
+<p>AEF routes Azure, SQL and compliance workers in parallel. Hooks validate the offline review contract; they do not sandbox host tools or prove that the host applied every instruction. <a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/agent-usage.md">Read host setup and workflow details</a>.</p></section>
+<section id="controls"><p class="eyebrow">04 / EVIDENCE &amp; APPLICABILITY</p><h2>Build the register before accepting results.</h2>
+<pre><code>uv run azure-sql-agent compliance-report --catalog sql-2022-stigs --output stig-review.html
+uv run azure-sql-agent guide --workflow nist-tls</code></pre>
+<p>The first command creates a local HTML register for the 102 pinned SQL Server 2022 STIG rules. With no supplied findings, every rule is NOT_ASSESSED. It is not a live scanner. Output files must not already exist; use a private output path for real evidence.</p>
+<ul><li>For each rule: record applicability, customer/provider responsibility, dated evidence, reviewer, result and remediation owner.</li><li>Separate PASS, FAIL, NOT_APPLICABLE and NOT_ASSESSED. Azure inheritance requires service-specific assurance; it never grants an automatic pass.</li><li>Keep NIST SP 800-52 Rev. 2 TLS review separate from DISA STIGs and SP 800-53. Select banking/accounting obligations with your compliance owner; a completed STIG register is not legal compliance certification.</li><li>For a new database, distinguish design review from deployed evidence. For migration, preserve source-before and target-after registers.</li></ul>
+<p><a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/compliance.md">Evidence format and branded HTML/PDF reports</a> · <a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/stig-coverage.md">Benchmark scope and Azure applicability</a></p></section>
+<section id="approval"><p class="eyebrow">05 / HUMAN DECISION</p><h2>Approve an exact plan.</h2>
+<p>The review packet needs the exact target and plan version, evidence gaps, impact, owner, change window, recovery and rollback steps, acceptance criteria, named approvers and any time-limited exceptions. Rehearse material changes in an approved isolated environment.</p>
+<p class="note">Natural-language approval or completion of this guide does not authorize broker execution. Live metadata reads require exact, fresh, externally signed approval. Supported writes require a separate exact-plan signed approval. Agents must never mint approvals or access reviewer private keys.</p>
+<p>The current read broker supports two fixed metadata reads. The write broker supports an approved nullable-column addition. Database creation, other DDL, migrations, cutovers and restores require a separately governed operator and approved tooling; SQLIQ prepares their review, not their execution.</p>
+<p><a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/operator-guide.md">Operator readiness</a> · <a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/approved-writes.md">Supported write approval</a> · <a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/sql-migration-review.md">Migration review contract</a></p></section>
+<section id="validate"><p class="eyebrow">06 / AFTER THE AUTHORIZED CHANGE</p><h2>Collect fresh evidence before closing.</h2>
+<ul><li>Use a newly approved collection plan. Compare actual state with the approved proposal and reassess affected controls.</li><li>Check access, audit, TLS, recovery, application behavior and performance against agreed acceptance criteria.</li><li>For migrations, reconcile counts and financial control totals, record control drift and obtain technical, security and finance acceptance.</li><li>Keep unresolved findings visible with owners and deadlines. Retain the private evidence packet and approvals under company policy.</li></ul>
+<p><strong>Ready for review:</strong> named owners, scoped evidence, complete applicable register, exact proposed change, tested recovery plan and explicit decision record. This guide cannot grant a go decision or certify the database.</p></section>
+</main><footer>SQLIQ · Offline onboarding guide · <a href="https://andrewgoodson.github.io/sqliq/">Project website</a> · <a href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/getting-started.md">Full onboarding documentation</a><br>Print this page using your browser, or save the HTML file for internal use. Documentation links require internet access.</footer></body></html>

@@ -1,5 +1,9 @@
 # Start an Azure SQL review
 
+For a high-level walkthrough before creating, updating or migrating a database,
+open the [standalone HTML guide](../site/start.html) locally or view the
+[published guide](https://andrewgoodson.github.io/sqliq/start.html).
+
 SQLIQ is a public, tenant-neutral toolkit for Codex and Claude Code. AEF Core is
 vendored and pinned; no separate AEF installation is needed. Offline workflows
 require Git, Python 3.11+ and [uv](https://docs.astral.sh/uv/). Clone with working

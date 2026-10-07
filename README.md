@@ -2,7 +2,7 @@
 
 **SQL STIG reviews, compliance evidence and governed Azure SQL migration planning for Codex and Claude Code.**
 
-[Website](https://andrewgoodson.github.io/sqliq/) · [Sample STIG report](https://andrewgoodson.github.io/sqliq/assets/sqliq-stig-review.pdf) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
+[Website](https://andrewgoodson.github.io/sqliq/) · [Sample STIG report](https://andrewgoodson.github.io/sqliq/assets/sqliq-stig-review.pdf) · [HTML setup guide](https://andrewgoodson.github.io/sqliq/start.html) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
 
 <img src="site/assets/sqliq-logo.png" alt="SQLIQ shield logo" width="128">
 
@@ -18,6 +18,14 @@ happen during installation or planning.
 **Status:** security-focused reference implementation, not an enterprise certification.
 Live access defaults off. Deployment controls must pass [readiness checks](docs/security.md)
 before production use. Read-only is the default; supported writes require separate exact signed approval.
+
+## Before creating or changing a database
+
+Open the [HTML setup guide](https://andrewgoodson.github.io/sqliq/start.html) for the
+setup, agent review, STIG evidence, approval and post-change checks. The standalone
+[`site/start.html`](site/start.html) can be opened directly from a checkout or served
+on an internal static site; it needs no build, scripts or external assets. It does
+not connect to a database or grant approval. External documentation links need internet access.
 
 ## Quick start (offline)
 

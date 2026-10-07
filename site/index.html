@@ -12,7 +12,7 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="header wrap">
 <a class="brand" href="#" aria-label="SQLIQ home"><img src="assets/sqliq-logo.png" width="36" height="40" alt=""><span>SQL<span class="iq">IQ</span></span></a>
-<nav aria-label="Main navigation"><a href="#coverage">Coverage</a><a href="#workflow">Agents</a><a href="#migration">Migration</a><a href="#reports">Reports</a><a class="nav-source" href="https://github.com/AndrewGoodson/sqliq">Source code</a></nav>
+<nav aria-label="Main navigation"><a href="start.html">Start here</a><a href="#coverage">Coverage</a><a href="#workflow">Agents</a><a href="#migration">Migration</a><a href="#reports">Reports</a><a class="nav-source" href="https://github.com/AndrewGoodson/sqliq">Source code</a></nav>
 </header>
 <main id="main">
 <section class="hero wrap">
@@ -92,7 +92,7 @@
 </div>
 </section>
 <section class="responsibility wrap"><p class="eyebrow">A SHARED PLATFORM. DISTINCT RESPONSIBILITIES.</p><div class="responsibility-grid"><article><h3>What Azure provides</h3><p>Platform controls may be inherited when service-specific assurance supports them. SQL Database, Managed Instance and SQL Server on VMs require different rule tailoring. Inheritance never grants an automatic pass.</p></article><article><h3>What your team owns</h3><p>Database access, data classification, customer configuration, audit review and migration decisions need named owners and evidence. Client TLS validation remains in scope alongside the STIG review.</p></article><article><h3>What the report records</h3><p>Supplied findings, source references and evidence gaps. Evidence quality, reviewer authority and financial applicability require independent review.</p></article></div><a class="inline-link" href="https://github.com/AndrewGoodson/sqliq/blob/main/docs/compliance.md">Read the coverage and inheritance contract</a></section>
-<section class="section wrap start" id="start"><div><p class="eyebrow">05 / GET STARTED</p><h2>Start with the repository.<br>Keep production untouched.</h2><p>Prepare a STIG review and migration plan locally, then build the full evidence register. These commands use no database credentials and do not scan a live endpoint.</p><a class="button primary" href="https://github.com/AndrewGoodson/sqliq#quick-start-offline">Open setup instructions</a></div><div class="terminal"><div class="terminal-head"><span>LOCAL WORKSPACE</span><span>Python 3.11+ / uv</span></div><pre><code><span class="comment"># In your SQLIQ checkout</span>
+<section class="section wrap start" id="start"><div><p class="eyebrow">05 / GET STARTED</p><h2>Start with the repository.<br>Keep production untouched.</h2><p>Prepare a STIG review and migration plan locally, then build the full evidence register. These commands use no database credentials and do not scan a live endpoint.</p><a class="button primary" href="start.html">Open the setup guide</a></div><div class="terminal"><div class="terminal-head"><span>LOCAL WORKSPACE</span><span>Python 3.11+ / uv</span></div><pre><code><span class="comment"># In your SQLIQ checkout</span>
 uv sync --locked --group dev
 uv run azure-sql-agent verify
 uv run azure-sql-agent graph
