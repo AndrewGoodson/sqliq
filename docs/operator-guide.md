@@ -33,7 +33,7 @@ contacted to validate this repository.
    `scripts/broker_entrypoint.py` described below.
 7. Treat stdout as confidential. Do not pipe results to public logs or an LLM.
    Inspect audit state after failures, obtain a fresh approval to retry and preserve
-   replay history. No database writes occur through this program.
+   replay history. The read workflow cannot write. See approved-writes.md for the separate write broker.
 
 ## Fixed-path process boundary
 

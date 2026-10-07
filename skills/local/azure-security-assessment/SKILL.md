@@ -15,3 +15,6 @@ or permissions. Recommendations may describe changes but cannot execute them.
 ARM read roles: Microsoft.Sql/servers/read, Microsoft.Sql/servers/databases/read,
 Microsoft.Sql/servers/azureADOnlyAuthentications/read scoped to this logical server.
 No subscription-wide Contributor/Owner, deployment, key listing or role-assignment access.
+
+Apply [shared review contract](../references/review-contract.md) and
+[Microsoft Learn control map](../references/microsoft-learn.md).

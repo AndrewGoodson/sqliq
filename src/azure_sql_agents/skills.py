@@ -15,7 +15,7 @@ def verify_sources(root: Path) -> str:
             raise ValueError("Unsafe source path")
         if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
             raise ValueError(f"Source integrity mismatch: {relative}")
-    actual = {str(p.relative_to(root)) for prefix in ("skills", "vendor/aef-core")
+    actual = {str(p.relative_to(root)) for prefix in ("skills", "vendor/aef-core", "compliance")
               for p in (root / prefix).rglob("*") if p.is_file()
               and "__pycache__" not in p.parts and p.suffix != ".pyc"}
     if actual != set(manifest["files"]):

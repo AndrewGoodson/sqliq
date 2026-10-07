@@ -1,0 +1,13 @@
+{
+  "publisher": "NIST",
+  "repository": "https://github.com/usnistgov/oscal-content",
+  "tag": "v1.5.0",
+  "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+  "source_url": "https://raw.githubusercontent.com/usnistgov/oscal-content/78650f02ad9321bb7b817846f8fbd4f2bcd620de/nist.gov/SP800-53/rev5/json/NIST_SP-800-53_rev5_catalog.json",
+  "sha256": "01f37cf90ea99d92242c936cbfbdebcc338eef1f71454e2acac36cc56e9bc062",
+  "license": "LICENSE.md (NIST public domain / CC0)",
+  "retrieved": "2026-10-06",
+  "catalog_version": "5.2.0",
+  "controls_including_enhancements": 1196,
+  "withdrawn_entries": 182
+}

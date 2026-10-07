@@ -1,0 +1,234 @@
+{
+  "ac": {
+    "implementation": "Authorize each human and workload; separate read, write, deployment and approval duties; review effective permissions including nested groups and emergency access. Restrict data-plane permissions independently of Azure RBAC. Parameterize review frequency and session constraints against the specific control.",
+    "evidence": "Approved access matrix; Azure roles and SQL effective grants; access reviews; joiner/mover/leaver records; negative authorization tests.",
+    "owner": "Customer IAM owner and DBA",
+    "azure_sql_database": "Review contained users, database roles, logical-server administrator and tenant identities.",
+    "managed_instance": "Include instance-level logins, server roles and cross-database access.",
+    "sql_server_vm": "Include OS administrators, service accounts, local groups and management ingress.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/security-best-practice?view=azuresql"
+    ]
+  },
+  "at": {
+    "implementation": "Create role-specific training for DBAs, developers, financial data stewards and reviewers. Exercise phishing, sensitive-data handling, approval forgery, prompt injection and incident escalation; assess learning and track overdue refreshers.",
+    "evidence": "Training policy, assigned curriculum, completion dates, exercise results and contractor coverage.",
+    "owner": "Customer security education and HR",
+    "azure_sql_database": "Train staff on PaaS responsibility limits and SQL data access.",
+    "managed_instance": "Include instance administration and networking duties.",
+    "sql_server_vm": "Include OS hardening, patching and privileged maintenance.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-governance-strategy"
+    ]
+  },
+  "au": {
+    "implementation": "Select auditable events from each control; capture privileged changes, data access and failures through appropriate SQL, Entra and Azure logs. Establish protected retention, clock correlation, reviewer independence and alert triage; test event delivery and gaps.",
+    "evidence": "Event catalog, audit settings, sample redacted events, retention and access policies, alert tests, review sign-offs.",
+    "owner": "Customer SOC and DBA",
+    "azure_sql_database": "Review SQL auditing destinations and Entra logs; test known event coverage limitations.",
+    "managed_instance": "Review instance and database audit specifications and destinations.",
+    "sql_server_vm": "Include SQL Server Audit and guest OS/security event collection.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/auditing-overview?view=azuresql"
+    ]
+  },
+  "ca": {
+    "implementation": "Define the system boundary, selected baseline and assessment plan; independently examine, interview and test each selected requirement. Maintain an authorization package, continuous-monitoring cadence and POA&M with owners, dates and closure evidence.",
+    "evidence": "System security plan, assessor results, authorization decision, risk register, POA&M and monitoring schedule.",
+    "owner": "Customer authorizing official and independent assessor",
+    "azure_sql_database": "Collect service-specific provider assurance and customer configuration evidence.",
+    "managed_instance": "Confirm the assessment boundary includes instance and dependent network services.",
+    "sql_server_vm": "Assess guest OS and engine controls as customer responsibilities.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-governance-strategy",
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-posture-vulnerability-management"
+    ]
+  },
+  "cm": {
+    "implementation": "Version reviewed infrastructure and schema baselines; inventory resources and software; require separation of approval and execution, staging validation, drift detection and rollback planning. Track emergency changes and restrict configuration privileges.",
+    "evidence": "Approved baseline, inventory, signed change ticket, exact plan, test and recovery evidence, drift findings.",
+    "owner": "Customer change manager and platform engineering",
+    "azure_sql_database": "Baseline exposed service settings, SQL schema and application configuration.",
+    "managed_instance": "Also baseline instance settings, scheduled jobs and supported features.",
+    "sql_server_vm": "Baseline OS, SQL engine, extensions and patch levels.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-devops-security",
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-posture-vulnerability-management"
+    ]
+  },
+  "cp": {
+    "implementation": "Translate financial processing dependencies into approved recovery objectives. Protect backups and recovery keys; test point-in-time recovery, regional disruption and application reconciliation. Record measured recovery time and data loss instead of relying on an SLA.",
+    "evidence": "Business impact analysis, recovery plan, retention settings, restoration exercise, reconciliation results and approved RTO/RPO.",
+    "owner": "Customer continuity owner, DBA and finance operations",
+    "azure_sql_database": "Select available retention, redundancy and recovery options for the service tier and region.",
+    "managed_instance": "Validate supported backup, restore and failover procedures for the instance.",
+    "sql_server_vm": "Operate and test SQL and OS recovery plus quorum, storage and application dependencies.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/business-continuity-high-availability-disaster-recover-hadr-overview?view=azuresql",
+      "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility"
+    ]
+  },
+  "ia": {
+    "implementation": "Identify users and workloads uniquely; govern credential issuance, rotation, revocation and emergency access. Prefer scoped Entra workload identities; validate client support and authentication methods against selected assurance requirements. Test disabled and expired credentials.",
+    "evidence": "Identity inventory, authentication policy, credential lifecycle records, sign-in evidence and revocation tests.",
+    "owner": "Customer IAM and application owner",
+    "azure_sql_database": "Review Entra administrator and database authentication paths separately.",
+    "managed_instance": "Review instance logins, database identities and permitted authentication methods.",
+    "sql_server_vm": "Include OS/domain/service identities and supported SQL version authentication.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/security-best-practice?view=azuresql"
+    ]
+  },
+  "ir": {
+    "implementation": "Maintain detection, triage, containment, evidence preservation, recovery and notification procedures for SQL compromise. Assign bank/legal escalation decisions; rehearse exfiltration and unauthorized financial change scenarios; require scoped approval for containment changes.",
+    "evidence": "Response plan, contact roster, tabletop outcomes, incident timelines, evidence custody records and corrective actions.",
+    "owner": "Customer incident commander, legal and SOC",
+    "azure_sql_database": "Coordinate service incidents with Microsoft while retaining customer investigation and notification duties.",
+    "managed_instance": "Include instance jobs, networking and administrator compromise scenarios.",
+    "sql_server_vm": "Include host forensics, malware response and guest isolation.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-incident-response"
+    ]
+  },
+  "ma": {
+    "implementation": "Authorize maintenance personnel, tools, windows and remote access. Record purpose, supervision, work performed and post-maintenance validation; disable temporary privileges. Evaluate provider maintenance assurance separately from customer application and administrative maintenance.",
+    "evidence": "Maintenance policy, tickets, access records, validated tooling and post-change checks; applicable provider assurance.",
+    "owner": "Customer operations owner; provider assurance reviewer",
+    "azure_sql_database": "Underlying platform maintenance is an inheritance candidate requiring service-bound assurance; customer settings remain owned.",
+    "managed_instance": "Review platform maintenance assurance and customer instance maintenance separately.",
+    "sql_server_vm": "Customer operates guest OS and SQL engine maintenance and patch recovery.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/security-considerations-best-practices?view=azuresql"
+    ]
+  },
+  "mp": {
+    "implementation": "Inventory database exports, backups, audit files, developer copies and removable media. Apply classification, encryption, access restrictions, retention, legal holds and verified disposal. Treat physical provider media controls as evidence-dependent inheritance candidates.",
+    "evidence": "Media inventory, export approvals, storage permissions, retention/hold decisions and destruction records or provider assurance.",
+    "owner": "Customer data owner and records management",
+    "azure_sql_database": "Review customer-controlled exports and backup retention; obtain provider media assurance for the service boundary.",
+    "managed_instance": "Include instance exports, backup movement and downstream stores.",
+    "sql_server_vm": "Include guest disks, snapshots, local backups and maintenance media.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/data-discovery-and-classification-overview?view=azuresql"
+    ]
+  },
+  "pe": {
+    "implementation": "Document physical and environmental boundaries for datacenters and customer premises. Review provider assurance scope and period for facility controls; verify customer administrator workstations, offices and any hybrid infrastructure independently.",
+    "evidence": "Applicable provider assessment, locations in scope, customer facility access reviews and environmental test records.",
+    "owner": "Customer facilities/security and provider assurance reviewer",
+    "azure_sql_database": "Datacenter facilities are inheritance candidates, not an automatic PASS or NA.",
+    "managed_instance": "Verify the service and region are covered by relied-upon provider assurance.",
+    "sql_server_vm": "Provider covers physical host facilities only as evidenced; customer premises remain in scope.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility"
+    ]
+  },
+  "pl": {
+    "implementation": "Maintain an approved system security and privacy plan with data flows, interfaces, roles, rules of behavior, baseline selection, parameter assignments and control implementations. Review changes in service, geography, data use or AI processing before adoption.",
+    "evidence": "Approved plans, architecture and data flows, rules acceptance, change history and control allocation matrix.",
+    "owner": "Customer system owner and security architect",
+    "azure_sql_database": "Include logical server, identities, applications, endpoints, keys and logging dependencies.",
+    "managed_instance": "Include instance features and network dependencies.",
+    "sql_server_vm": "Include guest OS, engine, management and backup dependencies.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-governance-strategy"
+    ]
+  },
+  "pm": {
+    "implementation": "Establish an accountable security/privacy program with resources, risk tolerance, metrics and executive oversight. Maintain enterprise inventory and mission dependencies; track systemic deficiencies, exceptions and supplier reliance beyond any one database.",
+    "evidence": "Program charter, budget, risk strategy, executive minutes, exception register and portfolio metrics.",
+    "owner": "Customer executive risk owner and CISO",
+    "azure_sql_database": "Map SQL Database to enterprise governance; service certification cannot replace customer program controls.",
+    "managed_instance": "Assign enterprise ownership across shared instances and tenants.",
+    "sql_server_vm": "Include infrastructure and engine lifecycle ownership in the enterprise program.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-governance-strategy"
+    ]
+  },
+  "ps": {
+    "implementation": "Define screening, access agreements, role risk designation, transfers and timely termination procedures for employees and suppliers. Coordinate HR-triggered revocation across Azure, SQL, source control and approval systems; validate emergency and contractor accounts.",
+    "evidence": "Approved personnel policy, screening attestations, access agreements, transfer/termination tickets and revocation evidence.",
+    "owner": "Customer HR, IAM and supplier manager",
+    "azure_sql_database": "Review customer personnel; provider personnel assurance must match the service scope.",
+    "managed_instance": "Include privileged instance operators and support contractors.",
+    "sql_server_vm": "Include OS administrators and personnel with physical or backup access.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility",
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access"
+    ]
+  },
+  "pt": {
+    "implementation": "Identify personal data, processing purpose, authority, notices, sharing and retention. Review consent where required, minimization, data-subject processes and privacy risk assessments. Keep financial/customer data out of AI prompts and public reports unless explicitly authorized.",
+    "evidence": "Data inventory, processing register, purpose/authority analysis, privacy assessment, notices, deletion and rights-request evidence.",
+    "owner": "Customer privacy officer, legal and data owner",
+    "azure_sql_database": "Review database fields and downstream extracts; classification labels alone do not establish lawful processing.",
+    "managed_instance": "Include cross-database flows, jobs and linked integrations.",
+    "sql_server_vm": "Include guest files, backup copies and monitoring exports containing personal data.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/data-discovery-and-classification-overview?view=azuresql"
+    ]
+  },
+  "ra": {
+    "implementation": "Assess threats, vulnerabilities, likelihood and business impact against financial workflows. Review Defender for SQL findings, configuration drift and external dependencies; assign treatment deadlines and reassess after material change. Preserve unresolved and untested risks.",
+    "evidence": "Risk assessment, asset/data criticality, vulnerability results, validated remediation, exception decisions and reassessment dates.",
+    "owner": "Customer risk owner and vulnerability management",
+    "azure_sql_database": "Validate coverage of service vulnerability checks; review application and identity risks separately.",
+    "managed_instance": "Assess instance features and network exposure as well as databases.",
+    "sql_server_vm": "Include OS, engine, agent and extension vulnerabilities.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-posture-vulnerability-management",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/security-considerations-best-practices?view=azuresql"
+    ]
+  },
+  "sa": {
+    "implementation": "Specify security, privacy, availability and audit requirements during acquisition and development. Threat-model SQL applications and agent interfaces; review code, dependencies and test results. Contract for supplier evidence and incident obligations; require acceptance criteria before release.",
+    "evidence": "Acquisition requirements, contract clauses, threat models, secure development evidence, SBOM and release acceptance.",
+    "owner": "Customer procurement, engineering and security architecture",
+    "azure_sql_database": "Review cloud service commitments and customer application design independently.",
+    "managed_instance": "Include instance feature choices and integration contracts.",
+    "sql_server_vm": "Include OS/SQL licensing support lifecycle and deployment supply chain.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-devops-security"
+    ]
+  },
+  "sc": {
+    "implementation": "Define trust boundaries and permitted data flows; protect transport, keys and stored data. Validate actual TLS protocols, certificates and cryptographic module requirements against the selected standard. Isolate administration and test egress, tenant separation and key recovery.",
+    "evidence": "Network/data-flow diagrams, approved paths, TLS handshake evidence, certificate inventory, key policy, cryptographic validation and recovery tests.",
+    "owner": "Customer network, cryptography and platform owners",
+    "azure_sql_database": "Review private access, encryption settings and client TLS independently of provider assurances.",
+    "managed_instance": "Validate instance subnet, endpoint and client connection behavior.",
+    "sql_server_vm": "Include OS crypto policy, engine certificates, disks and management paths.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/azure/azure-sql/database/security-best-practice?view=azuresql",
+      "https://learn.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/security-considerations-best-practices?view=azuresql"
+    ]
+  },
+  "si": {
+    "implementation": "Monitor integrity, threats and flaws; prioritize patches and validated fixes; test alerts and operational failure handling. Validate application inputs and data processing integrity, including financial reconciliation. Separate provider platform flaw handling from customer code and configuration duties.",
+    "evidence": "Patch/vulnerability records, alerts and response tests, integrity monitoring, validation tests and financial reconciliation evidence.",
+    "owner": "Customer SOC, DBA and application owner",
+    "azure_sql_database": "Obtain platform maintenance assurance; remediate customer schema, application and access defects.",
+    "managed_instance": "Include customer jobs, configuration and integrations in integrity checks.",
+    "sql_server_vm": "Maintain guest OS, engine and protection tooling with tested patch recovery.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-posture-vulnerability-management",
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-incident-response"
+    ]
+  },
+  "sr": {
+    "implementation": "Inventory critical suppliers and software dependencies; evaluate provenance, support, vulnerabilities and concentration risk. Pin and review agent skills, model providers and packages; govern updates and supplier incident notifications. Verify contractual and operational exit options.",
+    "evidence": "Supplier register, due diligence, signed provenance where available, dependency locks, SBOM, contracts and supplier reassessment records.",
+    "owner": "Customer supplier risk, procurement and software assurance",
+    "azure_sql_database": "Review Microsoft service scope plus every application, connector and AI supplier.",
+    "managed_instance": "Include integration, backup and operational tooling suppliers.",
+    "sql_server_vm": "Include OS images, SQL installers, extensions and maintenance tooling provenance.",
+    "sources": [
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-devops-security",
+      "https://learn.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-governance-strategy"
+    ]
+  }
+}

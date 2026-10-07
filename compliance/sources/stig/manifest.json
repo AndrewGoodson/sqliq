@@ -1,0 +1,50 @@
+{
+  "publisher": "Defense Information Systems Agency (DISA)",
+  "publication": "Microsoft SQL Server 2022 STIG, April 2026 package",
+  "archive_url": "https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_MS_SQL_Server_2022_Y26M04_STIG.zip",
+  "archive_sha256": "e46bfae4b5e2ad7a068bef2539f6f98467c9cdfa8a012f01f7868bf4e07a5e64",
+  "hash_reference": "https://ncp.nist.gov/checklist/1292/download/18495",
+  "retrieved_at": "2026-10-06",
+  "benchmark_date": "2026-04-01",
+  "files": [
+    {
+      "path": "U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.xml",
+      "sha256": "e581d8441b5e193cde83ccb01d2a82a5cbe84fe973631f6f9fc9f337ebcaabab",
+      "benchmark_id": "MS_SQL_Server_2022_Instance_STIG",
+      "version": "1",
+      "release": "4",
+      "rules": 79,
+      "archive_member": "U_MS_SQL_Server_2022_Instance_V1R4_Manual_STIG/U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.xml"
+    },
+    {
+      "path": "U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.xml",
+      "sha256": "b75cdf8bf0aa8ce204274019ccd2a9e64bf97cf7b974ccc7b8fb6623d82ed0ea",
+      "benchmark_id": "MS_SQL_Server_2022_Database_STIG",
+      "version": "1",
+      "release": "3",
+      "rules": 23,
+      "archive_member": "U_MS_SQL_Server_2022_Database_V1R3_Manual_STIG/U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.xml"
+    },
+    {
+      "path": "U_MS_SQL_Server_2022_STIG_V1_Release_Memo.pdf",
+      "sha256": "8e39cdc605121674a42ae5c117f38032b84c3e735c79abab8f6455c1a4566cae"
+    },
+    {
+      "path": "U_MS_SQL_Server_2022_Revision_History.pdf",
+      "sha256": "00e32ae2f39b7a1ff00c8b363950fc7ac9e47395f953b07db8fb46aa1a57d9ff"
+    },
+    {
+      "path": "U_MS_SQL_Server_2022_Overview.pdf",
+      "sha256": "61a5d04f6aa23490dbc1c8775fdde3575f7bdd2fde4e3b6733be1c70a85349ad"
+    },
+    {
+      "path": "U_Readme_SRG_and_STIG.pdf",
+      "sha256": "3cb161d138597fa39f9744ffda3517b68e1e9e99e6c134c7442021c988274a72"
+    }
+  ],
+  "total_rules": 102,
+  "provenance": "Archive bytes match SHA-256 published by NIST NCP; original DISA XML",
+  "license_notice": "Publisher notices retained in original XML and bundled PDFs. External publisher content is not relicensed under the SQLIQ code license. DISA logos and stylesheet are not redistributed; no endorsement implied.",
+  "excluded": "Supplemental executable SQL, stylesheet and DISA logo image",
+  "latest_release_claim": false
+}

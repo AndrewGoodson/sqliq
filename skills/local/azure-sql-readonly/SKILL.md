@@ -18,3 +18,6 @@ Effective rights depend on group memberships; DBA must verify them independently
 Consult upstream entra-id-auth, prevent-sql-injection and diagnose-slow-query.
 Never run their examples automatically. Results describe only visible metadata;
 truncation and missing visibility must be stated.
+
+Apply [shared review contract](../references/review-contract.md) and
+[Microsoft Learn control map](../references/microsoft-learn.md).

@@ -185,7 +185,8 @@ def test_offline_real_aef_graph_and_source_integrity(monkeypatch):
     policy = Policy.model_validate_json((ROOT / "config/example.json").read_bytes())
     result = assess(policy, "schema_inventory", verify_sources(ROOT))
     assert result["assessment"]["azure_review"]["deployment_evidence"] == "NOT VERIFIED"
-    assert result["assessment"]["sql_review"]["write_execution"] == "disabled"
+    assert result["assessment"]["sql_review"]["write_execution"] == (
+        "separate exact signed approval; nullable-column additions only")
     assert result["plan"]["sql"].startswith("SELECT TOP (?)")
 
 

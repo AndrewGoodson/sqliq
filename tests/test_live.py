@@ -177,3 +177,24 @@ def test_tenant_mismatch_denied():
     with pytest.raises(Denied):
         require_token_tenant("bad", "expected")
     require_token_tenant(token("expected"), "expected")
+
+
+@pytest.mark.parametrize('fail', [False, True])
+def test_write_connection_is_transactional_and_closes_on_failure(adapter, fail):
+    from azure_sql_agents.live import approved_connection
+    policy, _, seen = adapter
+
+    def use_connection():
+        with approved_connection(policy, write=True):
+            if fail:
+                raise RuntimeError('mock failure')
+    if fail:
+        with pytest.raises(RuntimeError):
+            use_connection()
+    else:
+        use_connection()
+    connection, options = seen['sql_connections'][0]
+    assert 'ApplicationIntent=ReadWrite;' in connection
+    assert 101 not in options['attrs_before']
+    assert options['autocommit'] is False
+    assert all(seen[key] for key in ('rollback', 'connection_closed', 'credentials_closed'))
