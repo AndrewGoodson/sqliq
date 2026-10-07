@@ -9,6 +9,7 @@ from pathlib import Path
 from .audit_report import audit_pdf
 from .board_report import board_pdf
 from .broker import Journal, ReadBroker
+from .catalogs import CATALOGS, bundled_register
 from .compliance import compliance_html, stig_register
 from .learning import OutcomeBatch, learn
 from .models import Policy
@@ -32,7 +33,11 @@ def main():
     stig = sub.add_parser("stig-register")
     stig.add_argument("--benchmark", type=Path, required=True)
     report = sub.add_parser("compliance-report")
-    report.add_argument("--benchmark", type=Path, required=True)
+    selection = report.add_mutually_exclusive_group(required=True)
+    selection.add_argument("--benchmark", type=Path)
+    selection.add_argument("--catalog", choices=CATALOGS)
+    inventory = sub.add_parser("catalog-register")
+    inventory.add_argument("--catalog", choices=CATALOGS, default="all")
     report.add_argument("--evidence", type=Path)
     report.add_argument("--output", type=Path, required=True)
     report.add_argument("--format", choices=["html", "pdf"], default="html")
@@ -86,7 +91,8 @@ def main():
             result = {"report": str(args.output), "mode": "offline_governance_briefing",
                       "live_checks": False, "compliance_claim": False}
         elif args.command == "compliance-report":
-            register = stig_register(args.benchmark)
+            register = (bundled_register(args.root, args.catalog) if args.catalog
+                        else stig_register(args.benchmark))
             rendered = (audit_pdf(register, args.evidence, args.company_logo, args.company_name)
                         if args.format == "pdf" else
                         compliance_html(register, args.evidence).encode("utf-8"))
@@ -95,6 +101,8 @@ def main():
             with os.fdopen(descriptor, "wb") as output:
                 output.write(rendered)
             result = {"report": str(args.output), "mode": "offline", "live_checks": False}
+        elif args.command == "catalog-register":
+            result = bundled_register(args.root, args.catalog)
         elif args.command == "stig-register":
             result = stig_register(args.benchmark)
         elif args.command == "graph":

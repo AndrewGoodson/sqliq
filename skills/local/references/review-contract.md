@@ -17,7 +17,7 @@
    A natural-language yes is not a signed broker approval. Supported live reads need
    exact, fresh externally signed approval through the isolated broker. Never mint
    approvals, access private keys or loosen policy after denial. Only the separate write broker supports approved nullable-column additions;
-   even after approval: stop at a reviewable proposal for a separately governed operator.
+   unsupported changes stop at a reviewable proposal for a separately governed operator.
 7. Do not promote learned outcomes into policy/skills automatically. De-identified
    outcome candidates need maintainer review, source review and regression evaluation.
 

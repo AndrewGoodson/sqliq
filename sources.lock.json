@@ -22,11 +22,11 @@
     "skills/local/azure-cli-assessment/SKILL.md": "b18697be86a568d5955762cabb014217b80e5c03906a32685c4b5190b4a2713c",
     "skills/local/azure-security-assessment/SKILL.md": "bd68119c5d2c822896b0ec89d0a149712e5628b0311f04705cc9e42a59791c65",
     "skills/local/azure-sql-readonly/SKILL.md": "cd239ac8c62d7761d3ef4f7765afc338da4dd0321b3082d450b05479909c6498",
-    "skills/local/orchestration-security/SKILL.md": "4abdfce1f856c09d6cb026d6cd5fde0984dc0e00ecde46e9ab1eb2ba368907fd",
+    "skills/local/orchestration-security/SKILL.md": "0c4220844af3af3f85b5a9ead1472f742595c9156504fe11cad1e99afb7fcf09",
     "skills/local/references/microsoft-learn.md": "36f340d180b8e11020768b6b691aebadbf0c7c8fbb23ae70d0ce30ef22bc8396",
-    "skills/local/references/review-contract.md": "0b6ac5ede474e542be4afd8056cdfa9aa373a7fd518d550e33b0c8ac3014aef2",
+    "skills/local/references/review-contract.md": "aacde76666373a73fbb736192c887c37f39ef226972d3111644afbb665c0c1c7",
     "skills/local/sql-change-review/SKILL.md": "e5e43b82256980e7e528ed8439b86206e78e90075b778a893091c30a42c5d399",
-    "skills/local/sql-compliance-review/SKILL.md": "8c99f98183bebff7f1b4ab9829ec768fd13fbfea1477cb955a48b79b90b9b77a",
+    "skills/local/sql-compliance-review/SKILL.md": "100cea7b0c606132463b39e5180f1d3a45f082c87606bea589d504023ddea394",
     "skills/local/sql-maintenance-review/SKILL.md": "e236a3397d866d9ad49d88897562bdd7f1e3c1b85b949991a0611d3f4f09e4b2",
     "skills/local/sql-migration-planning/SKILL.md": "5b79510f55e8cfd0e2e8d73dc4760f6e652f14ce2f4d0eb10da31731b6c33ab7",
     "skills/local/sql-performance-review/SKILL.md": "cef6f16e467d24915a3f5ad314606606d86aab6cc2031abe2ccfda96315a9ecc",
@@ -270,6 +270,17 @@
     "vendor/aef-core/aef/state/delta.py": "5dde239cb80933a1f77cc9c61a41687e75d1520aba8ee2536f14fbf95aee8b59",
     "vendor/aef-core/aef/state/migrations.py": "76247db66066a8d21f01190cb2d76772993ec1d7bd9387ccc3c8bd8c23018069",
     "vendor/aef-core/aef/state/schema.py": "4856b99919a43b27fbb5dc7ba7f9474b33a4a5d3b7e2839a98d153797a72b8f6",
-    "vendor/aef-core/pyproject.toml": "f8cbfdfcfc9494bba8948caf834596c948de9ff4cc5ab0c28a15933e72a8fcb6"
+    "vendor/aef-core/pyproject.toml": "f8cbfdfcfc9494bba8948caf834596c948de9ff4cc5ab0c28a15933e72a8fcb6",
+    "compliance/azure-family-guidance.json": "2337fe98cdcd44b6db132e0e46f105a9b47d59fbd86304a12ef82176b8faf73a",
+    "compliance/sources/nist/800-53-rev5.json": "01f37cf90ea99d92242c936cbfbdebcc338eef1f71454e2acac36cc56e9bc062",
+    "compliance/sources/nist/LICENSE.md": "9f0ddd1ed71f691bb483965a7c46e1315ab6cc28dac0426d4c3d27108aafde13",
+    "compliance/sources/nist/provenance.json": "5c8f2ed5fbdaaafecf3d86c4d8a0d0ab70432a58934a47e6eb7af3c97663afc3",
+    "compliance/sources/stig/U_MS_SQL_Server_2022_Database_STIG_V1R3_Manual-xccdf.xml": "b75cdf8bf0aa8ce204274019ccd2a9e64bf97cf7b974ccc7b8fb6623d82ed0ea",
+    "compliance/sources/stig/U_MS_SQL_Server_2022_Instance_STIG_V1R4_Manual-xccdf.xml": "e581d8441b5e193cde83ccb01d2a82a5cbe84fe973631f6f9fc9f337ebcaabab",
+    "compliance/sources/stig/U_MS_SQL_Server_2022_Overview.pdf": "61a5d04f6aa23490dbc1c8775fdde3575f7bdd2fde4e3b6733be1c70a85349ad",
+    "compliance/sources/stig/U_MS_SQL_Server_2022_Revision_History.pdf": "00e32ae2f39b7a1ff00c8b363950fc7ac9e47395f953b07db8fb46aa1a57d9ff",
+    "compliance/sources/stig/U_MS_SQL_Server_2022_STIG_V1_Release_Memo.pdf": "8e39cdc605121674a42ae5c117f38032b84c3e735c79abab8f6455c1a4566cae",
+    "compliance/sources/stig/U_Readme_SRG_and_STIG.pdf": "3cb161d138597fa39f9744ffda3517b68e1e9e99e6c134c7442021c988274a72",
+    "compliance/sources/stig/manifest.json": "f00a1f26e187907424d1bc619e01f79cd549657ca19eb50bb311ac27d00ec566"
   }
 }

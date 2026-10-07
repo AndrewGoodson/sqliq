@@ -58,3 +58,66 @@ def test_guide_cli_end_to_end(monkeypatch, capsys):
                                     "guide", "--workflow", "migration"])
     main()
     assert json.loads(capsys.readouterr().out)["workflow_guide"]["workflow"] == "migration"
+
+
+def test_specialists_execute_concurrently_with_deterministic_join(monkeypatch):
+    from threading import Barrier
+
+    from azure_sql_agents import orchestration
+
+    barrier = Barrier(3, timeout=5)
+    original = orchestration._run_specialist
+
+    def concurrent(domain, selection):
+        barrier.wait()  # Sequential dispatch fails instead of silently passing.
+        return original(domain, selection)
+
+    monkeypatch.setattr(orchestration, "_run_specialist", concurrent)
+    result = guide("schema")
+    assert result["parallel_execution"]["domains"] == ["azure", "sql", "compliance"]
+    assert list(result["domain_hooks"]) == ["azure", "sql", "compliance"]
+    assert "signed-write-plan" in result["sql_review"]["required_reviews"]
+    assert result["parallel_execution"]["model_calls"] == 0
+
+
+def test_specialist_failure_does_not_return_partial_guide(monkeypatch):
+    from azure_sql_agents import orchestration
+
+    original = orchestration._run_specialist
+
+    def broken(domain, selection):
+        if domain == "compliance":
+            raise ValueError("Incomplete compliance review")
+        return original(domain, selection)
+
+    monkeypatch.setattr(orchestration, "_run_specialist", broken)
+    with pytest.raises(Exception, match="Incomplete compliance review"):
+        guide("assessment")
+
+
+@pytest.mark.parametrize("workflow", WORKFLOWS)
+def test_domain_hooks_are_selected_for_each_workflow(workflow):
+    from azure_sql_agents.domain_hooks import DOMAIN_HOOKS
+
+    result = guide(workflow)
+    for domain in ("azure", "sql", "compliance"):
+        before, after = result["domain_hooks"][domain]
+        assert before["live_tools"] == []
+        assert after["assessment_status"] == "NOT_ASSESSED"
+        assert after["contract"] == "validated"
+        if domain != "compliance":
+            assert before["required_reviews"] == list(DOMAIN_HOOKS[domain][workflow])
+
+
+def test_hooks_reject_wrong_skill_and_false_assessment():
+    from azure_sql_agents.domain_hooks import after_domain, before_domain
+
+    with pytest.raises(ValueError, match="skill"):
+        before_domain("sql", "schema", "skills/upstream/execute-anything/SKILL.md")
+    with pytest.raises(ValueError, match="Unknown specialist"):
+        before_domain("shell", "schema", "ignored")
+    dispatch = before_domain("sql", "schema", "skills/local/sql-schema-design/SKILL.md")
+    for status, tools in (("PASS", []), ("NOT_ASSESSED", ["sql"] )):
+        with pytest.raises(ValueError, match="offline review contract"):
+            after_domain("sql", {"selected_skill": dispatch["selected_skill"],
+                                 "status": status, "live_tools": tools}, dispatch)

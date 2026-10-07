@@ -59,6 +59,7 @@ def stig_register(path: Path) -> dict:
     return {
         "mode": "offline_stig_inventory", "benchmark_id": benchmark_id, "version": version,
         "benchmark_sha256": hashlib.sha256(raw).hexdigest(),
+        "release": root.findtext("x:plain-text[@id='release-info']", namespaces=ns),
         "provenance": "UNVERIFIED: reviewer must verify official DISA origin and release",
         "scope": "All Rule elements, including profile-unselected rules; no filtering",
         "total_rules": len(rules), "assessed_rules": 0, "compliance_claim": False,
@@ -160,7 +161,7 @@ th{background:#17313d;color:white}p{max-width:95ch;line-height:1.6}
 Statuses are operator-supplied assertions, not independently verified conclusions.
 Verify publisher provenance, scope, evidence freshness and reviewer authority.
 Missing rules remain NOT_ASSESSED. No compliance certification or overall pass is issued.</p>
-<h2>SQL STIG findings and evidence gaps</h2><div class="table"><table><thead><tr>
+<h2>Control findings and evidence gaps</h2><div class="table"><table><thead><tr>
 <th>Rule</th><th>Title</th><th>Severity</th><th>Reported status</th><th>Evidence reference</th>
 <th>Observed at</th><th>Reviewer</th><th>Rationale</th><th>Remediation proposal</th>
 </tr></thead><tbody>{''.join(rows)}</tbody></table></div>
@@ -181,7 +182,7 @@ def control_details(control: dict, finding: dict) -> list[tuple[str, str]]:
     """Preserve source check/fix text without executing benchmark content."""
     references = [f"{i.get('system')}: {i.get('value')}" for i in control['identifiers']]
     references += [f"{i['href']} {i['text']}" for i in control['references']]
-    return [
+    details = [
         ('Rule version', control.get('version') or 'Not supplied'),
         ('Severity', control.get('severity') or 'Unknown'),
         ('Reported status', finding.get('status', 'NOT_ASSESSED')),
@@ -197,3 +198,21 @@ def control_details(control: dict, finding: dict) -> list[tuple[str, str]]:
             'Review applicability and source fix; collect evidence before assigning a result')),
         ('Benchmark remediation guidance', '\n'.join(control['fixes']) or 'Not supplied by benchmark'),
     ]
+
+    if "source_benchmark" in control:
+        details += [("Source benchmark", control["source_benchmark"]),
+                    ("Source release", control["source_release"] or "Unknown")]
+    if "azure_guidance" in control:
+        import json
+        guidance = control["azure_guidance"]
+        details += [("Source disposition", "WITHDRAWN; review replacement links" if
+                     control["withdrawn"] else "Active catalog entry"),
+                    ("Organization-defined parameters (unassigned)",
+                     json.dumps(control["parameters"], ensure_ascii=False)),
+                    ("Azure implementation starting point", guidance["implementation"]),
+                    ("Required evidence starting point", guidance["evidence"]),
+                    ("Suggested accountable role", guidance["owner"]),
+                    ("Azure SQL Database responsibility", guidance["azure_sql_database"]),
+                    ("Managed Instance responsibility", guidance["managed_instance"]),
+                    ("SQL Server VM responsibility", guidance["sql_server_vm"])]
+    return details

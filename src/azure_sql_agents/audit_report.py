@@ -28,7 +28,7 @@ def audit_pdf(register: dict, evidence: Path | None = None,
     output = BytesIO()
     doc = SimpleDocTemplate(output, pagesize=(612, 792), topMargin=96,
                             bottomMargin=52, leftMargin=42, rightMargin=42,
-                            title='SQLIQ SQL STIG audit evidence report', author='SQLIQ')
+                            title='SQLIQ SQL control audit evidence report', author='SQLIQ')
 
     def p(value, style='BodyText'):
         return Paragraph(escape(str(value)).replace('\n', '<br/>'), styles[style])
@@ -50,7 +50,7 @@ def audit_pdf(register: dict, evidence: Path | None = None,
 
     counts = Counter(findings.get(c['rule_id'], {}).get('status', 'NOT_ASSESSED')
                      for c in register['controls'])
-    story = [p('SQL STIG audit evidence report', 'Title'), p('Target: ' + scope),
+    story = [p('SQL control audit evidence report', 'Title'), p('Target: ' + scope),
              p(f"Benchmark: {register['benchmark_id']} / {register['version']}"),
              p('SHA-256: ' + register['benchmark_sha256']),
              p(f"Coverage: every one of {register['total_rules']} benchmark rules included."),

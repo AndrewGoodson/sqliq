@@ -6,7 +6,7 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
 files = {}
-for prefix in ("skills", "vendor/aef-core"):
+for prefix in ("skills", "vendor/aef-core", "compliance"):
     for path in sorted((root / prefix).rglob("*")):
         if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc":
             files[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()

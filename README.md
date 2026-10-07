@@ -191,3 +191,27 @@ uv run azure-sql-agent verify
 
 Licensed under [MIT](LICENSE). Vendored and referenced projects retain their own
 licenses and attribution; see [provenance](docs/provenance.md).
+
+## Full NIST and SQL STIG coverage
+
+The pinned catalog includes **1,196 NIST SP 800-53 Rev. 5.2.0 controls and
+enhancements**, including 182 withdrawn entries retained for traceability, and
+**102 DISA SQL Server 2022 rules** across the database and instance benchmarks.
+Every entry retains its source reference, requirement, assessment instructions and
+available source guidance. NIST entries add Azure service responsibility and
+implementation/evidence starting points across all 20 control families.
+
+```sh
+uv run azure-sql-agent compliance-report --catalog all --output assessment.html
+uv run azure-sql-agent compliance-report --catalog all --format pdf --output assessment.pdf
+```
+
+Add `--evidence FINDINGS_JSON` for scoped operator findings and PDF
+`--company-logo customer.png --company-name "Your company"` for dual branding.
+Without evidence, all 1,298 entries remain **NOT_ASSESSED**. This command produces
+an offline evidence register; it does not scan databases or certify compliance.
+Full catalog coverage does not establish that every control applies to every SQL
+service, nor cover every NIST publication or banking/accounting obligation.
+
+See [NIST coverage](docs/nist-coverage.md), [SQL STIG coverage](docs/stig-coverage.md)
+and the [financial applicability register](docs/framework-register.md).

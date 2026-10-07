@@ -35,10 +35,25 @@ uv run azure-sql-agent guide --workflow performance
 uv run azure-sql-agent guide --workflow migration
 ```
 
-The pinned AEF graph runs orchestrator → Azure → SQL → compliance, returning local skill paths,
-Microsoft guidance and required assessment outputs. The host reads and applies those
-skills to supplied evidence. The deterministic graph does not call an LLM, collect
-performance data, or prove host compliance. Source verification runs before guidance.
+The pinned AEF orchestrator dispatches Azure, SQL and compliance specialists in
+parallel, each with a separate AEF graph, state and services. It joins all three
+results in a fixed order; any specialist failure fails the complete guide. The
+pinned AEF executor does not yet execute fan-out edges, so SQLIQ provides a bounded
+three-worker adapter around independent AEF graphs without modifying the vendor.
+
+Each specialist receives its workflow-specific local skill. Fixed before-domain
+hooks validate that assignment and attach the required domain review checks.
+After-domain hooks reject changed skills, live tools or a claimed assessment result.
+For example, schema work routes integrity, financial reconciliation and signed-write
+plan reviews; performance work routes query plans, blocking/indexes and regression
+validation; compliance routes control coverage, provenance, inheritance and finance
+applicability. See [parallel domain reviews](parallel-domain-reviews.md).
+
+The output contains local skill paths, Microsoft guidance and required assessment
+outputs. The host reads and applies those skills to supplied evidence. These
+hooks validate offline routing, not actual database findings or host tool use.
+The deterministic graphs do not call an LLM, collect performance data, or prove
+host compliance. Source verification runs before CLI guidance.
 
 ## Required assessment output
 
@@ -48,9 +63,10 @@ applicability, confidence, impact, proposed change, validation, rollback and own
 Unknowns remain unknown. Preserve accounting control totals and correction history;
 never include customer rows or secrets in a public issue, Git commit or model input.
 
-Only two fixed metadata reads are executable, through the separately deployed signed
-broker. Azure CLI, arbitrary DMVs, schema writes, migrations, restores and failover
-are planning/review only. Even an approved write cannot execute in this runtime.
+Only two fixed metadata reads are executable through the signed read broker.
+The separate write broker supports an exact approved nullable-column addition.
+Azure CLI, arbitrary DMVs, other schema writes, migrations, restores and failover
+remain planning/review only. Specialist parallelism never executes broker calls.
 Microsoft examples and “offline migration assessment” commands may still connect or
 mutate systems: imported examples do not expand these boundaries.
 
@@ -64,7 +80,7 @@ Microsoft sources through reviewed commits, never unattended self-learning promo
 
 ## Compliance review
 
-The fourth AEF agent reviews SQL STIG coverage, NIST TLS evidence and financial
+The compliance AEF specialist reviews SQL STIG coverage, NIST TLS evidence and financial
 control applicability. `uv run azure-sql-agent guide --workflow compliance` prepares
 an offline review. `uv run azure-sql-agent stig-register --benchmark FILE` inventories
 every rule in a supplied XCCDF benchmark, initially NOT_ASSESSED. See
