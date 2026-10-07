@@ -17,3 +17,6 @@ User review, staging tests and a fresh production change approval remain mandato
 
 Apply [shared review contract](../references/review-contract.md) and
 [Microsoft Learn control map](../references/microsoft-learn.md).
+
+For an approved nullable-column addition, follow the separate
+[write broker workflow](../../../docs/approved-writes.md). Never sign for the user.

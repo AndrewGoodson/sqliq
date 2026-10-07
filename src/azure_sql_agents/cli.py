@@ -6,6 +6,7 @@ import os
 import sys
 from pathlib import Path
 
+from .board_report import board_pdf
 from .broker import Journal, ReadBroker
 from .compliance import compliance_html, stig_register
 from .learning import OutcomeBatch, learn
@@ -14,6 +15,7 @@ from .orchestration import assess, build_graph, guide
 from .proposals import propose
 from .skills import verify_sources
 from .workflows import WORKFLOWS
+from .writes import Change, WriteBroker, WritePolicy, execute_write, write_plan
 
 
 def main():
@@ -22,6 +24,10 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("verify")
     sub.add_parser("graph")
+    board = sub.add_parser("board-report")
+    board.add_argument("--output", type=Path, required=True)
+    board.add_argument("--company-logo", type=Path, help="Local PNG or JPEG, at most 2 MiB")
+    board.add_argument("--company-name", help="Organization display name, at most 80 characters")
     stig = sub.add_parser("stig-register")
     stig.add_argument("--benchmark", type=Path, required=True)
     report = sub.add_parser("compliance-report")
@@ -40,6 +46,14 @@ def main():
     run.add_argument("--plan", type=Path, required=True)
     run.add_argument("--approval", type=Path, required=True)
     run.add_argument("--journal", type=Path, required=True)
+    writeplan = sub.add_parser("write-plan")
+    writeplan.add_argument("--policy", type=Path, required=True)
+    writeplan.add_argument("--change", type=Path, required=True)
+    writer = sub.add_parser("write")
+    writer.add_argument("--policy", type=Path, required=True)
+    writer.add_argument("--plan", type=Path, required=True)
+    writer.add_argument("--approval", type=Path, required=True)
+    writer.add_argument("--journal", type=Path, required=True)
     ddl = sub.add_parser("propose")
     ddl.add_argument("--kind", choices=["add_nullable_column", "create_index"], required=True)
     ddl.add_argument("--schema", default="dbo")
@@ -51,6 +65,22 @@ def main():
         source_hash = verify_sources(args.root)
         if args.command == "verify":
             result = {"source_integrity": "verified", "manifest_sha256": source_hash}
+        elif args.command in {"write-plan", "write"}:
+            policy = WritePolicy.model_validate_json(args.policy.read_bytes())
+            if args.command == "write-plan":
+                change = Change.model_validate_json(args.change.read_bytes())
+                result = write_plan(policy, change, source_hash).model_dump(mode="json")
+            else:
+                broker = WriteBroker(policy, source_hash, Journal(args.journal), execute_write)
+                result = broker.invoke({"plan": json.loads(args.plan.read_bytes()),
+                                        "approval": json.loads(args.approval.read_bytes())})
+        elif args.command == "board-report":
+            rendered = board_pdf(args.company_logo, args.company_name)
+            descriptor = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "wb") as output:
+                output.write(rendered)
+            result = {"report": str(args.output), "mode": "offline_governance_briefing",
+                      "live_checks": False, "compliance_claim": False}
         elif args.command == "compliance-report":
             rendered = compliance_html(stig_register(args.benchmark), args.evidence)
             # Exclusive create prevents replacing a prior evidence artifact.

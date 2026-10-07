@@ -1,4 +1,4 @@
-"""Fixed Azure public-cloud GETs and fixed SQL metadata catalog. No write API."""
+"""Fixed Azure posture checks and explicit connections for isolated brokers."""
 from __future__ import annotations
 
 import base64
@@ -6,6 +6,7 @@ import ipaddress
 import json
 import socket
 import struct
+from contextlib import contextmanager
 
 from .broker import Denied
 from .models import Plan, Policy
@@ -33,7 +34,8 @@ def require_token_tenant(token: str, tenant: str):
         raise Denied("Credential tenant does not match approved target") from None
 
 
-def read_metadata(policy: Policy, plan: Plan) -> dict:
+@contextmanager
+def approved_connection(policy: Policy, *, write: bool = False):
     # Lazy imports ensure offline planning requires neither Azure SDK nor ODBC.
     import httpx
     import pyodbc
@@ -76,29 +78,16 @@ def read_metadata(policy: Policy, plan: Plan) -> dict:
         token_struct = struct.pack("<I", len(token)) + token
         # Pooling must be disabled before any connection in this dedicated broker process.
         pyodbc.pooling = False
+        intent = "ReadWrite" if write else "ReadOnly"
+        attributes = {1256: token_struct} if write else {1256: token_struct, 101: 1}
         connection = pyodbc.connect(
             "DRIVER={ODBC Driver 18 for SQL Server};"
             f"SERVER=tcp:{host},1433;DATABASE={target.database};"
-            "Encrypt=yes;TrustServerCertificate=no;ApplicationIntent=ReadOnly;ConnectRetryCount=0;",
-            attrs_before={1256: token_struct, 101: 1}, timeout=5, autocommit=False)
+            f"Encrypt=yes;TrustServerCertificate=no;ApplicationIntent={intent};ConnectRetryCount=0;",
+            attrs_before=attributes, timeout=5, autocommit=False)
         try:
-            connection.timeout = plan.timeout_seconds
-            cursor = connection.cursor()
-            try:
-                cursor.execute(plan.sql, plan.row_limit)
-                columns = [column[0] for column in cursor.description]
-                rows = []
-                for row in cursor:
-                    rows.append(dict(zip(columns, row, strict=True)))
-                    if len(rows) > plan.row_limit or len(json.dumps(rows).encode()) > 60000:
-                        raise Denied("Metadata response exceeds approved bounds")
-                return {"action": plan.action, "rows": rows,
-                        "possibly_truncated": len(rows) == plan.row_limit,
-                        "posture": {"public_network": "Disabled", "entra_only": True,
-                                    "tls_minimum": "1.2"},
-                        "coverage": "Metadata visible to this principal only; absence is not proof."}
-            finally:
-                cursor.close()
+            connection.timeout = 10
+            yield connection
         finally:
             try:
                 connection.rollback()
@@ -106,3 +95,23 @@ def read_metadata(policy: Policy, plan: Plan) -> dict:
                 connection.close()
     finally:
         credential.close()
+
+
+def read_metadata(policy: Policy, plan: Plan) -> dict:
+    with approved_connection(policy) as connection:
+        cursor = connection.cursor()
+        try:
+            cursor.execute(plan.sql, plan.row_limit)
+            columns = [column[0] for column in cursor.description]
+            rows = []
+            for row in cursor:
+                rows.append(dict(zip(columns, row, strict=True)))
+                if len(rows) > plan.row_limit or len(json.dumps(rows).encode()) > 60000:
+                    raise Denied("Metadata response exceeds approved bounds")
+            return {"action": plan.action, "rows": rows,
+                    "possibly_truncated": len(rows) == plan.row_limit,
+                    "posture": {"public_network": "Disabled", "entra_only": True,
+                                "tls_minimum": "1.2"},
+                    "coverage": "Metadata visible to this principal only; absence is not proof."}
+        finally:
+            cursor.close()

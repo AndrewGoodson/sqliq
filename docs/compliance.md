@@ -1,6 +1,6 @@
 # SQL compliance: every rule accounted for
 
-SchemaIQ provides an offline compliance specialist and complete **rule inventory
+SQLIQ provides an offline compliance specialist and complete **rule inventory
 for a supplied XCCDF benchmark**, not an automated STIG certification engine.
 No official benchmark is bundled; no live database has been assessed.
 
@@ -85,7 +85,7 @@ The publication is under review; verify updates before each assessment.
 Microsoft documents [Azure SQL connectivity settings](https://learn.microsoft.com/en-us/azure/azure-sql/database/connectivity-settings?view=azuresql-db)
 and [TLS 1.3/TDS 8.0 support](https://learn.microsoft.com/en-us/sql/relational-databases/security/networking/tls-1-3?view=sql-server-ver17).
 Review actual client/driver/server capabilities and connection negotiation; do not
-infer them from a server minimum setting or SchemaIQ's connection configuration.
+infer them from a server minimum setting or SQLIQ's connection configuration.
 
 ## Financial control applicability
 

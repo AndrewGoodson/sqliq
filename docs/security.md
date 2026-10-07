@@ -29,7 +29,7 @@ manifest; they do not prove a malicious manifest safe.
 | Posture gate | Public network disabled, Entra-only enabled, TLS minimum 1.2, DB online |
 | Data minimization | Metadata only, <=100 rows, <=64 KiB serialized result |
 | Failure handling | No retry; nonce consumed on provider failure; no raw provider errors |
-| Offline changes | Small validated DDL proposal templates; no execution function |
+| Offline changes | Small validated DDL proposal templates; separate signed-write broker for supported nullable-column additions |
 
 Timeouts bound individual connection/query/HTTP operations, not the total wall-clock
 run or SDK token retries. An OS/service supervisor must impose a total run deadline.
@@ -78,5 +78,12 @@ with an old approval after failure. Replan and have the human explicitly approve
 
 Azure public-cloud SQL Database only. No sovereign-cloud endpoints, SQL Managed
 Instance, on-premises SQL Server, Azure VM management, failover/swapping, business
-row exports, schema execution or arbitrary performance queries. Such capabilities
+row exports, arbitrary schema execution or arbitrary performance queries. Such capabilities
 require new threat models, scoped identities, tests and separate approvals.
+
+## Separate write boundary
+
+See [approved writes](approved-writes.md). The nullable-column write broker uses a
+separate audience and policy, exact signed plan, consumed nonce and transaction.
+Write identities must be separate from read identities. Live write controls remain
+unverified. A failure may occur after commit; reconcile before another approval.

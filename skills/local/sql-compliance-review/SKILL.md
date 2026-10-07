@@ -38,6 +38,12 @@ Read [review contract](../references/review-contract.md) and
    Keep STIG findings, TLS findings and financial control mappings distinct.
    Propose prioritized remediation, validation and rollback for human review.
 
-No live commands, SQL checks, remediation or signing. Catalog reads cannot assess
-all STIG controls. Writes remain unavailable even when requested or approved.
+No direct live commands, SQL checks, remediation or signing from the agent. Catalog reads cannot assess
+all STIG controls. Only the separate signed-write broker may execute supported changes; never use a shell or arbitrary SQL.
 Learning accepts de-identified enumerated signals only; it never changes controls.
+
+For IT and board concerns, read [AI governance](../../../docs/ai-governance.md).
+Generate `board-report --output NEW_PDF` offline. Explain provider, customer and
+shared responsibility; require scoped provider attestations before claiming inherited
+assurance. Address AI policy, host disclosure, token efficiency and evidence gaps.
+The generic PDF is a proposal, not an assessment of the organization.

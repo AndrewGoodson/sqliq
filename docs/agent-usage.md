@@ -1,4 +1,4 @@
-# Use SchemaIQ with Codex or Claude Code
+# Use SQLIQ with Codex or Claude Code
 
 Clone the repository and launch your agent from its root. Codex discovers the local
 workflows through `.agents/skills`; Claude Code uses `.claude/skills`. Both directories

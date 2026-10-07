@@ -27,3 +27,6 @@ compliance*.html
 control-register*.json
 findings*.json
 *-xccdf.xml
+
+# Local PDF render inspection scratch files.
+tmp/

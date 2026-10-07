@@ -2,7 +2,7 @@
 
 Local validation, 2026-10-06:
 
-- 88 automated tests pass, including approval tampering/expiry/replay, concurrent
+- 112 automated tests pass, including approval tampering/expiry/replay, concurrent
   nonce reservation, fail-closed audit failures, source integrity, mocked Azure/ODBC
   transport boundaries, offline graph behavior and governed learning.
 - Ruff checks pass. Runtime source-manifest integrity verification passes.
@@ -14,17 +14,16 @@ Local validation, 2026-10-06:
   working graph-selection interaction, zero console errors or warnings.
 - Baseline publication only (before the new skills/compliance changes): a fresh clone installs with the locked
   dependencies, verifies source integrity and passes all 62 tests.
-- Baseline [GitHub CI](https://github.com/AndrewGoodson/schemaiq/actions/runs/37557863804)
+- Baseline [GitHub CI](https://github.com/AndrewGoodson/sqliq/actions/runs/37557863804)
   passed on Linux for initial implementation commit `1997e7c`.
-- Baseline [Pages deployment](https://github.com/AndrewGoodson/schemaiq/actions/runs/37557863787)
+- Baseline [Pages deployment](https://github.com/AndrewGoodson/sqliq/actions/runs/37557863787)
   succeeded. Public HTML, CSS, JavaScript and logo return HTTP 200 and match local
   source hashes. The hosted page loads in a browser without console errors.
 
 These checks do not establish compliance certification or production readiness.
 No live Azure tenant, private endpoint, database, managed identity, ODBC driver,
 external approval service or deployment isolation was exercised. See
-[security deployment gates](security.md) before enabling any live reads. Schema
-write execution does not exist. Browser and scanner artifacts are local and are
+[security deployment gates](security.md) before enabling any live reads. Only the narrow signed nullable-column write path exists; live writes remain unverified. Browser and scanner artifacts are local and are
 not published; GitHub Actions provides repeatable code/test/dependency checks.
 
 Current compliance tests cover complete synthetic nested/unselected XCCDF rule
@@ -37,3 +36,9 @@ Current site checked at 1440px and 390px: no horizontal overflow, functioning
 compliance graph selection and no console messages. Synthetic HTML report rendered
 with two rules, one supplied failure and one unassessed rule; injected markup stays
 text. HTML output uses exclusive creation and owner-only filesystem permissions.
+
+The IT/board PDF is four pages, visually inspected after co-branding changes. Every
+page includes SQLIQ and optional company artwork. Automated checks verify embedded
+logos, bounded local raster inputs, organization labels and offline generation.
+Write tests cover separate approval audience, signed-plan tampering, expiry, replay,
+disabled policy, consumed approvals on failure and transactional connection cleanup.

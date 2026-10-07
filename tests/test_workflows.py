@@ -22,7 +22,8 @@ def test_offline_graph_routes_existing_skills_without_network(workflow, monkeypa
     assert selected["workflow"] == workflow
     assert result["azure_review"]["selected_skill"] == selected["azure_skill"]
     assert result["sql_review"]["selected_skill"] == selected["sql_skill"]
-    assert result["sql_review"]["write_execution"] == "disabled"
+    assert result["sql_review"]["write_execution"] == (
+        "separate exact signed approval; nullable-column additions only")
     for field in ("orchestrator_skill", "azure_skill", "sql_skill",
                   "compliance_skill", "review_contract", "microsoft_guidance"):
         assert (ROOT / selected[field]).is_file()

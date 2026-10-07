@@ -51,7 +51,7 @@ Imported verbatim at the same pinned revisions: `azure-resource-lookup` from
 Review boundary: examples include CLI authentication, live assessment, elevated
 SQL access, actual-plan execution and mutating operations. Local wrappers explicitly
 exclude these actions. Imported frontmatter tool permissions are never granted to
-SchemaIQ agents. Only local wrappers are exposed to host discovery.
+SQLIQ agents. Only local wrappers are exposed to host discovery.
 
 Direct Microsoft Learn review is summarized in the
 [control map](../skills/local/references/microsoft-learn.md), with retrieval date and

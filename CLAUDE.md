@@ -1,4 +1,4 @@
-# SchemaIQ for Claude
+# SQLIQ for Claude
 
 Follow `AGENTS.md`, `SECURITY.md` and `docs/security.md`. Local workflows are discovered
 under `.claude/skills`; canonical content lives in `skills/local`. Resolve references

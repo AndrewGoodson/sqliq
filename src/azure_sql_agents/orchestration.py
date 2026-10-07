@@ -31,7 +31,7 @@ def build_graph(workflow: str = "assessment"):
             "selected_skill": selection["sql_skill"],
             "skills": ["azure-sql-readonly", "sql-change-review", "entra-id-auth",
                        "prevent-sql-injection", "schema-migrations-safely", "diagnose-slow-query"],
-            "write_execution": "disabled", "read_scope": "bounded system catalog metadata",
+            "write_execution": "separate exact signed approval; nullable-column additions only", "read_scope": "bounded system catalog metadata",
             "principal_permissions": "DBA verification required"}}), "compliance"
 
     def compliance(state, context, services):

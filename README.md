@@ -1,6 +1,6 @@
-# SchemaIQ
+# SQLIQ
 
-<img src="site/assets/schemaiq-logo.png" alt="SchemaIQ shield logo" width="128">
+<img src="site/assets/sqliq-logo.png" alt="SQLIQ shield logo" width="128">
 
 Shared Codex and Claude Code workflows for Azure SQL assessments, migrations, schema
 review, performance, security and maintenance. AEF Core orchestration with dedicated
@@ -11,7 +11,7 @@ happen during installation or planning.
 
 **Status:** security-focused reference implementation, not an enterprise certification.
 Live access defaults off. Deployment controls must pass [readiness checks](docs/security.md)
-before production use. No write execution exists; schema changes are proposals only.
+before production use. Read-only is the default; supported writes require separate exact signed approval.
 
 ## Quick start (offline)
 
@@ -82,12 +82,11 @@ credential listing, approval bypass or self-issued approvals. For live setup, fo
 
 ## Showcase and governed learning
 
-[Website](https://andrewgoodson.github.io/schemaiq/) · [Learning contract](docs/learning.md)
+[Website](https://andrewgoodson.github.io/sqliq/) · [Learning contract](docs/learning.md)
 
 AEF consolidates repeated, de-identified control outcomes into review candidates.
-No automatic promotion, policy modification or model retraining. Write execution
-remains absent even after a read approval; future write capability needs a separate
-security-reviewed implementation and explicit user authorization.
+No automatic promotion, policy modification or model retraining. Read approvals cannot authorize writes. Supported nullable-column additions require
+a separate exact signed write approval; see [approved writes](docs/approved-writes.md).
 
 The static `site/` showcase uses no analytics, external scripts, credentials or cloud
 connections. GitHub Pages deploys only that directory.
@@ -110,3 +109,23 @@ uv run azure-sql-agent compliance-report --benchmark /secure/review/benchmark-xc
 
 This inventories every imported rule and displays supplied findings; it does not
 scan a live database. Omit `--evidence` for a complete unassessed checklist.
+
+## IT and board briefing
+
+```sh
+mkdir -p output/pdf
+uv run azure-sql-agent board-report --output output/pdf/sqliq-it-board-briefing.pdf
+```
+
+Public proposal covering inherited Azure assurance, customer duties, AI governance
+and token efficiency. No customer assessment is implied. See [AI governance](docs/ai-governance.md).
+
+## Approval-gated writes
+
+Read-only by default. [Separate signed write approval](docs/approved-writes.md)
+authorizes one supported nullable-column addition. No arbitrary SQL or automatic
+remediation. Live deployment and write behavior remain unverified.
+
+Reports include the SQLIQ logo. Add `--company-logo /private/logo.png` and
+`--company-name "Your organization"` to `board-report` for co-branding on every page.
+See [report branding and AI governance](docs/ai-governance.md).

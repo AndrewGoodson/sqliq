@@ -1,6 +1,6 @@
 # Governed self-learning
 
-SchemaIQ uses AEF Core's `InMemoryMemoryStore`, `RuleBasedConsolidator` and
+SQLIQ uses AEF Core's `InMemoryMemoryStore`, `RuleBasedConsolidator` and
 `InMemoryKnowledgeStore` to group repeated outcome signals into learning candidates.
 This is deterministic outcome consolidation, not model retraining or autonomous
 self-modification. No provider, network, database reader or persistent memory runs.

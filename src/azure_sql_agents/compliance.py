@@ -62,6 +62,7 @@ def compliance_review() -> dict:
         "status": "NOT_ASSESSED", "compliance_claim": False,
         "required": ["exact DISA product benchmark and release; every rule accounted for",
                      "Azure service applicability and shared responsibility",
+                     "AI governance, token efficiency and IT/board briefing",
                      "NIST SP 800-52 Rev. 2 TLS evidence beyond a minimum TLS setting",
                      "finance framework scope approved by control owners",
                      "evidence, exceptions, remediation, owner and independent review"],
@@ -123,12 +124,12 @@ def compliance_html(register: dict, evidence_path: Path | None = None) -> str:
     return '''<!doctype html><html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
-<title>SchemaIQ SQL compliance review</title><style>
+<title>SQLIQ SQL compliance review</title><style>
 body{font:16px system-ui;color:#17313d;background:#f5f7f8;margin:3vw}
 h1{font-size:2.3rem}h2{margin-top:2rem}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:white}
 th,td{padding:12px;border:1px solid #ccd7dd;text-align:left;vertical-align:top;min-width:110px;overflow-wrap:anywhere}
 th{background:#17313d;color:white}p{max-width:95ch;line-height:1.6}
-</style><h1>SchemaIQ | SQL compliance review</h1>''' + f'''
+</style><h1>SQLIQ | SQL compliance review</h1>''' + f'''
 <p><strong>Target:</strong> {escape(scope)}</p>
 <p><strong>Benchmark:</strong> {escape(register['benchmark_id'])} / {escape(register['version'])}<br>
 <strong>SHA-256:</strong> {escape(register['benchmark_sha256'])}</p>
@@ -150,4 +151,4 @@ not establish compliance. STIG findings alone do not evaluate every TLS requirem
 framework versions and evidence requirements. No universal financial SQL checklist
 applies to every database. Provider attestations do not prove customer compliance.</p>
 <p>Remediation is a proposal only. Live access requires exact externally signed approval;
-write execution is unavailable.</p></html>'''
+writes require separate exact signed approval.</p></html>'''
