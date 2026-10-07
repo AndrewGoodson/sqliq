@@ -2,7 +2,9 @@
 
 <img src="site/assets/schemaiq-logo.png" alt="SchemaIQ shield logo" width="128">
 
-AEF Core orchestration with dedicated Azure and SQL specialists, pinned Microsoft
+Shared Codex and Claude Code workflows for Azure SQL assessments, migrations, schema
+review, performance, security and maintenance. AEF Core orchestration with dedicated
+Azure, SQL and compliance specialists, pinned Microsoft
 skills, local security skills, and an independently approved metadata-read broker.
 Built for accounting teams and financial institutions. Public, tenant-neutral source. No credentials, tenant discovery or database access
 happen during installation or planning.
@@ -29,6 +31,21 @@ Run from the repository root, or pass `--root /path/to/reviewed/checkout` before
 subcommand. Installation from this checkout uses the vendored AEF dependency via uv;
 a standalone wheel does not bundle AEF or skills. See [provenance](docs/provenance.md).
 
+## Codex and Claude skills
+
+Start agents from this checkout. Ten local skills are discoverable by both hosts;
+13 pinned Microsoft skills remain reference-only. Use
+[agent setup and workflows](docs/agent-usage.md) and the
+[Microsoft Learn control map](skills/local/references/microsoft-learn.md).
+
+```sh
+uv run azure-sql-agent guide --workflow performance
+uv run azure-sql-agent guide --workflow migration
+```
+
+Guidance is offline. Performance collection, Azure CLI execution, migrations and
+maintenance execution are unsupported. See [host acceptance cases](docs/agent-evaluation.md).
+
 ## Architecture
 
 ```mermaid
@@ -36,7 +53,8 @@ flowchart LR
   Task --> Orchestrator[AEF orchestration agent]
   Orchestrator --> Azure[Azure specialist]
   Azure --> SQL[SQL specialist]
-  SQL --> Plan[Offline review plan]
+  SQL --> Compliance[Compliance specialist]
+  Compliance --> Plan[Offline review plan]
   Plan --> Human[Human reviewer: external signing key]
   Human --> Broker[Isolated broker: signature + policy + durable nonce]
   Broker --> ARM[Fixed Azure GET posture checks]
@@ -44,7 +62,7 @@ flowchart LR
   DB --> Result[Bounded metadata to stdout]
 ```
 
-The three AEF nodes are deterministic specialists. They select domain controls and
+The four AEF nodes are deterministic specialists. They select domain controls and
 produce a plan; no LLM provider, shell tool or autonomous remediation is configured.
 Microsoft skill examples are reference content, never authority to run commands.
 [Agent contracts](agents/orchestrator.md) document ownership and tool boundaries.
@@ -75,3 +93,20 @@ The static `site/` showcase uses no analytics, external scripts, credentials or 
 connections. GitHub Pages deploys only that directory.
 
 [Validation evidence](docs/validation.md) records the tested scope and remaining deployment gates.
+
+## Compliance review
+
+The fourth AEF agent reviews SQL STIG coverage, NIST TLS evidence and financial
+control applicability. `uv run azure-sql-agent guide --workflow compliance` prepares
+an offline review. `uv run azure-sql-agent stig-register --benchmark FILE` inventories
+every rule in a supplied XCCDF benchmark, initially NOT_ASSESSED. See
+[compliance coverage](docs/compliance.md).
+
+Generate an offline HTML control review in one command:
+
+```sh
+uv run azure-sql-agent compliance-report --benchmark /secure/review/benchmark-xccdf.xml --evidence /secure/review/findings.json --output /secure/review/compliance.html
+```
+
+This inventories every imported rule and displays supplied findings; it does not
+scan a live database. Omit `--evidence` for a complete unassessed checklist.

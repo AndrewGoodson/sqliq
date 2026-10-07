@@ -14,3 +14,11 @@ changing access paths. Preserve fail-closed behavior and existing AEF safety hol
 - Run `uv run azure-sql-agent verify` after dependency/skill changes. Maintainers may
   regenerate source locks only after reviewing provenance and the complete diff.
 - Report unverified live deployment controls explicitly; tests are not certification.
+
+## Host skills
+
+Codex discovers `.agents/skills`; Claude discovers `.claude/skills`. Both resolve to
+`skills/local`. Read `docs/agent-usage.md` and the selected skill's shared review
+contract. Use `uv run azure-sql-agent guide --workflow <name>` for offline AEF
+routing. Apply Microsoft Learn sources with explicit applicability and evidence.
+No live Azure CLI, SQL MCP or alternate tool path may bypass the signed broker.

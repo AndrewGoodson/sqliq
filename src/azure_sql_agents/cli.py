@@ -2,15 +2,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
 from .broker import Journal, ReadBroker
+from .compliance import compliance_html, stig_register
 from .learning import OutcomeBatch, learn
 from .models import Policy
-from .orchestration import assess, build_graph
+from .orchestration import assess, build_graph, guide
 from .proposals import propose
 from .skills import verify_sources
+from .workflows import WORKFLOWS
 
 
 def main():
@@ -19,6 +22,14 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("verify")
     sub.add_parser("graph")
+    stig = sub.add_parser("stig-register")
+    stig.add_argument("--benchmark", type=Path, required=True)
+    report = sub.add_parser("compliance-report")
+    report.add_argument("--benchmark", type=Path, required=True)
+    report.add_argument("--evidence", type=Path)
+    report.add_argument("--output", type=Path, required=True)
+    workflow = sub.add_parser("guide")
+    workflow.add_argument("--workflow", choices=sorted(WORKFLOWS), required=True)
     learning = sub.add_parser("learn")
     learning.add_argument("--outcomes", type=Path, required=True)
     plan = sub.add_parser("plan")
@@ -40,9 +51,20 @@ def main():
         source_hash = verify_sources(args.root)
         if args.command == "verify":
             result = {"source_integrity": "verified", "manifest_sha256": source_hash}
+        elif args.command == "compliance-report":
+            rendered = compliance_html(stig_register(args.benchmark), args.evidence)
+            # Exclusive create prevents replacing a prior evidence artifact.
+            descriptor = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "w", encoding="utf-8") as output:
+                output.write(rendered)
+            result = {"report": str(args.output), "mode": "offline", "live_checks": False}
+        elif args.command == "stig-register":
+            result = stig_register(args.benchmark)
         elif args.command == "graph":
             print(build_graph().visualize())
             return
+        elif args.command == "guide":
+            result = guide(args.workflow)
         elif args.command == "propose":
             result = propose(args.kind, args.schema, args.table, args.name, args.type)
         elif args.command == "learn":

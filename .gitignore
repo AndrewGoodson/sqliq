@@ -21,3 +21,9 @@ config/local*.json
 
 output/
 .playwright-cli/
+
+# Private compliance artifacts; keep outside the checkout by preference.
+compliance*.html
+control-register*.json
+findings*.json
+*-xccdf.xml

@@ -1,0 +1,153 @@
+"""Offline, complete XCCDF rule inventory. Never evaluates or executes checks."""
+from __future__ import annotations
+
+import hashlib
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+MAX_BYTES = 16 * 1024 * 1024
+NAMESPACES = {"http://checklists.nist.gov/xccdf/1.1", "http://checklists.nist.gov/xccdf/1.2"}
+
+
+def stig_register(path: Path) -> dict:
+    with path.open("rb") as stream:
+        raw = stream.read(MAX_BYTES + 1)
+    if len(raw) > MAX_BYTES:
+        raise ValueError("Benchmark too large")
+    # UTF-8 only: reject DTDs/entities before handing bytes to the XML parser.
+    text = raw.decode("utf-8-sig")
+    if "<!DOCTYPE" in text.upper() or "<!ENTITY" in text.upper() or "\x00" in text:
+        raise ValueError("Unsafe XML")
+    root = ET.fromstring(text)
+    namespace = root.tag.partition("}")[0].removeprefix("{")
+    if namespace not in NAMESPACES or root.tag != f"{{{namespace}}}Benchmark":
+        raise ValueError("Expected an XCCDF benchmark")
+    ns = {"x": namespace}
+    benchmark_id = root.get("id")
+    version = root.findtext("x:version", namespaces=ns)
+    if not benchmark_id or not version:
+        raise ValueError("Benchmark identity/version required")
+    rules = root.findall(".//x:Rule", ns)
+    if not rules or len(rules) > 10000:
+        raise ValueError("Invalid rule count")
+    seen = set()
+    controls = []
+    for rule in rules:
+        identity = rule.get("id")
+        if not identity or identity in seen:
+            raise ValueError("Missing or duplicate rule ID")
+        seen.add(identity)
+        controls.append({
+            "rule_id": identity, "version": rule.findtext("x:version", namespaces=ns),
+            "title": rule.findtext("x:title", namespaces=ns), "severity": rule.get("severity"),
+            "identifiers": [{"system": item.get("system"), "value": item.text}
+                            for item in rule.findall("x:ident", ns)],
+            "status": "NOT_ASSESSED", "applicability": "UNDETERMINED",
+            "responsibility": "UNDETERMINED", "evidence": [], "owner": None,
+            "reviewer": None, "rationale": None, "remediation_proposal": None,
+        })
+    return {
+        "mode": "offline_stig_inventory", "benchmark_id": benchmark_id, "version": version,
+        "benchmark_sha256": hashlib.sha256(raw).hexdigest(),
+        "provenance": "UNVERIFIED: reviewer must verify official DISA origin and release",
+        "scope": "All Rule elements, including profile-unselected rules; no filtering",
+        "total_rules": len(rules), "assessed_rules": 0, "compliance_claim": False,
+        "controls": controls,
+    }
+
+
+def compliance_review() -> dict:
+    return {
+        "selected_skill": "skills/local/sql-compliance-review/SKILL.md",
+        "status": "NOT_ASSESSED", "compliance_claim": False,
+        "required": ["exact DISA product benchmark and release; every rule accounted for",
+                     "Azure service applicability and shared responsibility",
+                     "NIST SP 800-52 Rev. 2 TLS evidence beyond a minimum TLS setting",
+                     "finance framework scope approved by control owners",
+                     "evidence, exceptions, remediation, owner and independent review"],
+        "live_collection": "disabled; existing approved catalog reads are insufficient",
+    }
+
+
+def compliance_html(register: dict, evidence_path: Path | None = None) -> str:
+    """Render untrusted, operator-supplied findings; never infer a passing check."""
+    import html
+    import json
+    from datetime import datetime
+
+    escape = lambda value: html.escape(str(value), quote=True)  # noqa: E731
+    findings = {}
+    scope = "No database evidence supplied"
+    if evidence_path is not None:
+        with evidence_path.open("rb") as stream:
+            raw = stream.read(MAX_BYTES + 1)
+        if len(raw) > MAX_BYTES:
+            raise ValueError("Evidence too large")
+        document = json.loads(raw)
+        if set(document) != {"benchmark_sha256", "target", "findings"}:
+            raise ValueError("Invalid evidence document")
+        if document["benchmark_sha256"] != register["benchmark_sha256"]:
+            raise ValueError("Evidence benchmark mismatch")
+        scope = document["target"]
+        if not isinstance(scope, str) or not scope.strip():
+            raise ValueError("Target required")
+        if not isinstance(document["findings"], list) or len(document["findings"]) > 10000:
+            raise ValueError("Invalid findings")
+        known = {row["rule_id"] for row in register["controls"]}
+        required = {"rule_id", "status", "evidence", "observed_at", "reviewer", "rationale",
+                    "remediation"}
+        for item in document["findings"]:
+            if not isinstance(item, dict) or set(item) != required:
+                raise ValueError("Invalid finding fields")
+            if any(not isinstance(value, str) or not value.strip() for value in item.values()):
+                raise ValueError("Finding fields must be nonempty strings")
+            if item["rule_id"] not in known or item["rule_id"] in findings:
+                raise ValueError("Unknown or duplicate finding")
+            if item["status"] not in {"PASS", "FAIL", "NOT_APPLICABLE", "NOT_ASSESSED"}:
+                raise ValueError("Invalid status")
+            if datetime.fromisoformat(item["observed_at"]).tzinfo is None:
+                raise ValueError("Evidence timestamp requires timezone")
+            findings[item["rule_id"]] = item
+    counts = dict.fromkeys(["PASS", "FAIL", "NOT_APPLICABLE", "NOT_ASSESSED"], 0)
+    rows = []
+    for control in register["controls"]:
+        finding = findings.get(control["rule_id"], {})
+        status = finding.get("status", "NOT_ASSESSED")
+        counts[status] += 1
+        cells = [control["rule_id"], control["title"], control["severity"], status,
+                 finding.get("evidence", "Missing"), finding.get("observed_at", "Unknown"),
+                 finding.get("reviewer", "Unassigned"), finding.get("rationale", "Review required"),
+                 finding.get("remediation", "Determine applicability and collect evidence")]
+        rows.append('<tr>' + ''.join(f'<td>{escape(cell)}</td>' for cell in cells) + '</tr>')
+    summary = ' · '.join(f'{key}: {value}' for key, value in counts.items())
+    return '''<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>SchemaIQ SQL compliance review</title><style>
+body{font:16px system-ui;color:#17313d;background:#f5f7f8;margin:3vw}
+h1{font-size:2.3rem}h2{margin-top:2rem}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:white}
+th,td{padding:12px;border:1px solid #ccd7dd;text-align:left;vertical-align:top;min-width:110px;overflow-wrap:anywhere}
+th{background:#17313d;color:white}p{max-width:95ch;line-height:1.6}
+</style><h1>SchemaIQ | SQL compliance review</h1>''' + f'''
+<p><strong>Target:</strong> {escape(scope)}</p>
+<p><strong>Benchmark:</strong> {escape(register['benchmark_id'])} / {escape(register['version'])}<br>
+<strong>SHA-256:</strong> {escape(register['benchmark_sha256'])}</p>
+<p><strong>{register['total_rules']} rules inventoried.</strong> {escape(summary)}</p>
+<p>Offline report. No database connection or automated control checks performed.
+Statuses are operator-supplied assertions, not independently verified conclusions.
+Verify publisher provenance, scope, evidence freshness and reviewer authority.
+Missing rules remain NOT_ASSESSED. No compliance certification or overall pass is issued.</p>
+<h2>SQL STIG findings and evidence gaps</h2><div class="table"><table><thead><tr>
+<th>Rule</th><th>Title</th><th>Severity</th><th>Reported status</th><th>Evidence reference</th>
+<th>Observed at</th><th>Reviewer</th><th>Rationale</th><th>Remediation proposal</th>
+</tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+<h2>NIST SP 800-52 TLS review — NOT_ASSESSED</h2>
+<p>Review protocol support and negotiation, cipher suites, certificates, validation,
+cryptographic modules and client/server applicability. A minimum TLS setting does
+not establish compliance. STIG findings alone do not evaluate every TLS requirement.</p>
+<h2>Financial controls — NOT_ASSESSED</h2>
+<p>Control owners must determine applicable SOX, GLBA, PCI DSS and other obligations,
+framework versions and evidence requirements. No universal financial SQL checklist
+applies to every database. Provider attestations do not prove customer compliance.</p>
+<p>Remediation is a proposal only. Live access requires exact externally signed approval;
+write execution is unavailable.</p></html>'''

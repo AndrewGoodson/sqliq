@@ -13,8 +13,9 @@ from pydantic import BaseModel, ConfigDict, Field
 class Outcome(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     run_id: UUID
-    agent: Literal["azure", "sql"]
-    control: Literal["private_endpoint", "entra_only", "metadata_scope", "schema_review"]
+    agent: Literal["azure", "sql", "compliance"]
+    control: Literal["private_endpoint", "entra_only", "metadata_scope", "schema_review",
+                     "stig_evidence", "tls_evidence"]
     outcome: Literal["failure", "success"]
 
 
@@ -34,7 +35,7 @@ def learn(batch: OutcomeBatch) -> dict:
             content={"failing_nodes": [event.control], "objective": event.control,
                      "feedback": f"Review {event.control} evidence and regression coverage."}))
     candidates = []
-    for agent in ("azure", "sql"):
+    for agent in ("azure", "sql", "compliance"):
         for entry in RuleBasedConsolidator().consolidate(memory, knowledge, agent_id=agent):
             candidates.append({"agent": entry.agent_id, "signal": entry.signature,
                                "distinct_runs": entry.occurrence_count,

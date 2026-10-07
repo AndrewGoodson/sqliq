@@ -16,3 +16,6 @@ read-only defaults, user approvals and audit. Its bypass mode is intentionally e
 
 Produce evidence with scope, time and limitations. Never mark missing deployment
 checks as passed. No model provider is configured; current nodes are deterministic.
+
+Apply [shared review contract](../references/review-contract.md) and
+[Microsoft Learn control map](../references/microsoft-learn.md).
