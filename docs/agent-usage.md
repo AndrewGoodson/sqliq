@@ -1,5 +1,7 @@
 # Use SQLIQ with Codex or Claude Code
 
+Start with the [database onboarding guide](getting-started.md) for a scoped first review.
+
 Clone the repository and launch your agent from its root. Codex discovers the local
 workflows through `.agents/skills`; Claude Code uses `.claude/skills`. Both directories
 contain symlinks to the same reviewed `skills/local` content. Enable Git symlink
@@ -9,7 +11,7 @@ using skills. Resolve reference links from the canonical skill folder.
 Read `AGENTS.md`, `SECURITY.md` and `docs/security.md` first. The host must have no live
 Azure/SQL credentials or access to broker/reviewer secrets. Skill instructions alone
 cannot restrict an otherwise privileged agent. Install dependencies with `uv sync
---locked --all-extras`, then run `uv run azure-sql-agent verify` before offline work.
+--locked --group dev`, then run `uv run azure-sql-agent verify` before offline work.
 
 ## Select a workflow
 

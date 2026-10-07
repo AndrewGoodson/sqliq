@@ -1,8 +1,12 @@
 # SQL compliance: every rule accounted for
 
+For a scoped first run, see [getting started](getting-started.md). Use the separate
+[NIST SP 800-52 TLS evidence worklist](nist-tls-review.md) for client/server TLS review.
+
 SQLIQ provides an offline compliance specialist and complete **rule inventory
 for a supplied XCCDF benchmark**, not an automated STIG certification engine.
-No official benchmark is bundled; no live database has been assessed.
+Pinned SQL Server 2022 STIG catalogs and the SP 800-53 catalog are bundled;
+see [catalog coverage](nist-coverage.md). No live database has been assessed.
 
 ## Select the correct benchmark
 

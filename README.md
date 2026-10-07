@@ -2,7 +2,7 @@
 
 **Governed Azure SQL workflows for Codex and Claude Code.**
 
-[Website](https://andrewgoodson.github.io/sqliq/) · [Documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
+[Website](https://andrewgoodson.github.io/sqliq/) · [Getting started](docs/getting-started.md) · [Agent documentation](docs/agent-usage.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE)
 
 <img src="site/assets/sqliq-logo.png" alt="SQLIQ shield logo" width="128">
 
@@ -29,9 +29,10 @@ cd sqliq
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
 ```sh
-uv sync --locked --all-extras
+uv sync --locked --group dev
 uv run azure-sql-agent verify
 uv run azure-sql-agent graph
+uv run azure-sql-agent guide --workflow compliance
 uv run azure-sql-agent plan --policy config/example.json --action schema_inventory
 uv run azure-sql-agent propose --kind add_nullable_column --table Orders --name ReviewedAt --type 'datetime2(7)'
 uv run azure-sql-agent learn --outcomes config/learning-example.json
@@ -41,6 +42,38 @@ uv run pytest
 Run from the repository root, or pass `--root /path/to/reviewed/checkout` before the
 subcommand. Installation from this checkout uses the vendored AEF dependency via uv;
 a standalone wheel does not bundle AEF or skills. See [provenance](docs/provenance.md).
+
+## Review your own Azure SQL database
+
+Anyone can clone SQLIQ and run its offline workflows. Start with the
+[database onboarding guide](docs/getting-started.md): select one database, establish
+an evidence boundary, load the domain skills, and prepare a review with named owners.
+A download does not grant access to Azure or install a production broker.
+
+| Capability | Available today | Boundary |
+|---|---|---|
+| Codex and Claude skills | Shared local skills and Microsoft references | Host must load and apply them; instructions are not an OS sandbox |
+| AEF Core graphs and hooks | Parallel Azure, SQL and compliance guidance; domain checks | Deterministic offline routing, not autonomous database assessment |
+| Governed self-learning | De-identified repeated outcomes become review candidates | Human-reviewed promotion; no model retraining or automatic policy changes |
+| NIST SP 800-52 Rev. 2 | [TLS evidence review](docs/nist-tls-review.md) | Separate from SQL STIGs and the SP 800-53 catalog |
+| Compliance reports | HTML/PDF control registers, evidence and recommendations | Missing evidence remains NOT_ASSESSED; no live compliance scanner |
+| Database reads and writes | Two fixed metadata reads; separate nullable-column write broker | Exact fresh externally signed approval and isolated deployment required |
+
+For a first agent session, start Codex or Claude Code in this checkout and use:
+
+```text
+Use orchestration-security and sql-compliance-review for one Azure SQL Database.
+Read docs/getting-started.md and run the offline compliance guide. Confirm the
+skills and domain hooks selected. Ask for a redacted scope and approved evidence;
+do not connect to Azure or SQL. Review applicable SQL STIGs, SP 800-53 controls,
+and SP 800-52 Rev. 2 TLS evidence separately. Identify inherited, shared and
+customer controls, missing evidence, recommendations, owners and approval needs.
+Do not call an unassessed control passed. Produce a reviewable report.
+```
+
+Use [workflow selection](docs/agent-usage.md#select-a-workflow) for schema,
+performance, migrations, maintenance and security. See [AI governance](docs/ai-governance.md)
+for model use, data handling and token budgets.
 
 ## Codex and Claude skills
 
@@ -72,6 +105,10 @@ flowchart LR
   ARM --> DB[Private endpoint: fixed SQL metadata queries]
   DB --> Result[Bounded metadata to stdout]
 ```
+
+The diagram shows the metadata-plan and broker path. Offline `guide` workflows
+use three parallel specialist graphs with domain hooks and an all-required join;
+see [parallel domain reviews](docs/parallel-domain-reviews.md).
 
 The four AEF nodes are deterministic specialists. They select domain controls and
 produce a plan; no LLM provider, shell tool or autonomous remediation is configured.
